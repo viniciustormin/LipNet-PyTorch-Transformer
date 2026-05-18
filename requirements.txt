@@ -21,3 +21,6 @@ tensorboard>=2.13.0
 
 # Utilities
 tqdm>=4.65.0
+
+# Preprocessing only (face detection for lip cropping)
+face-alignment>=1.3.5
