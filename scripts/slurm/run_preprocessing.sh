@@ -23,6 +23,7 @@ detect_container_runtime
 build_container_args
 
 log "=== Preprocessing GRID iniciado ==="
+log "Speakers: ${SPEAKERS}  →  tag=${RUN_TAG}"
 print_job_context
 
 mkdir -p "${LIP_DIR}"
@@ -31,12 +32,25 @@ log "Instalando face-alignment..."
 "${CONTAINER_RUNTIME}" exec --nv "${IMAGE_PATH}" \
     pip install --user --quiet face-alignment
 
-log "Extraindo frames e recortando lábios..."
-container_exec python scripts/preprocess_lips.py \
-    --raw_dir   "${RAW_VIDEO_DIR}" \
-    --out_dir   "${LIP_DIR}" \
-    --n_workers 1 \
-    --device    cuda
+log "Extraindo frames e recortando lábios para speakers: $(effective_speakers)"
+for n in $(effective_speakers); do
+    spk="s${n}"
+    spk_raw="${RAW_VIDEO_DIR}/${spk}"
+    spk_lip="${LIP_DIR}/${spk}"
+
+    if [[ -d "${spk_lip}" ]] && [[ $(find "${spk_lip}" -name "*.jpg" | wc -l) -gt 0 ]]; then
+        log "  [SKIP] ${spk} já preprocessado"
+        continue
+    fi
+
+    log "  Processando ${spk}..."
+    container_exec python scripts/preprocess_lips.py \
+        --raw_dir   "${spk_raw}" \
+        --out_dir   "${spk_lip}" \
+        --n_workers 1 \
+        --device    cuda
+    log "  [OK] ${spk}"
+done
 
 log "=== Preprocessing concluído ==="
 log "Próximo passo: sbatch scripts/slurm/run_experiment.sh"

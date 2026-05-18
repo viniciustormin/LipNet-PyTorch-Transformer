@@ -2,8 +2,12 @@
 # Download do GRID Corpus — rode direto no terminal, sem SLURM:
 #   bash scripts/slurm/download_grid.sh
 #
+# Controle via variáveis de ambiente (padrão: só speaker 1):
+#   SPEAKERS="1 2 3" bash scripts/slurm/download_grid.sh
+#   SPEAKERS=all     bash scripts/slurm/download_grid.sh
+#
 # Fonte: https://spandh.dcs.shef.ac.uk/gridcorpus/#downloads
-# Tamanho total: ~6 MB (alinhamentos) + ~82 GB (vídeos 6000kbps, 2 partes por speaker)
+# Tamanho: ~190 KB (alinhamentos) + ~2.4 GB (vídeos) por speaker
 
 set -euo pipefail
 
@@ -12,14 +16,11 @@ export PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 source "${SCRIPT_DIR}/common.sh"
 
 log "=== Download GRID Corpus iniciado ==="
-log "Node: ${SLURMD_NODENAME:-local}"
-print_job_context
+log "Speakers: ${SPEAKERS}  →  tag=${RUN_TAG}"
 
 mkdir -p "${RAW_VIDEO_DIR}" "${ALIGN_DIR}"
 
 BASE_URL="https://spandh.dcs.shef.ac.uk/gridcorpus"
-# s21 não tem vídeo no GRID
-SPEAKERS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 26 27 28 29 30 31 32 33 34)
 
 _wget() {
     wget --no-check-certificate -L --show-progress --continue "$@"
@@ -39,7 +40,7 @@ _check() {
 # 1. Word alignments  — s{n}/align/s{n}.tar  (~190 KB cada)
 # ---------------------------------------------------------------------------
 log "Baixando word alignments..."
-for n in "${SPEAKERS[@]}"; do
+for n in $(effective_speakers); do
     spk="s${n}"
     out_dir="${ALIGN_DIR}/${spk}/align"
 
@@ -53,9 +54,8 @@ for n in "${SPEAKERS[@]}"; do
     _wget "${BASE_URL}/${spk}/align/${spk}.tar" -O "$tmp"
     _check "$tmp" 1024
 
-    mkdir -p "${ALIGN_DIR}/${spk}/align"
-    tar -xf "$tmp" -C "${ALIGN_DIR}/${spk}/align/" --strip-components=1 2>/dev/null \
-        || tar -xf "$tmp" -C "${ALIGN_DIR}/${spk}/align/"
+    mkdir -p "${ALIGN_DIR}/${spk}"
+    tar -xf "$tmp" -C "${ALIGN_DIR}/${spk}/"
     rm -f "$tmp"
     log "  [OK] ${spk}"
 done
@@ -64,8 +64,8 @@ done
 # 2. Videos (high quality 6000kbps) — duas partes por speaker (~1.2 GB cada)
 #    part1 + part2 são partes de um único tar — concatenar antes de extrair
 # ---------------------------------------------------------------------------
-log "Baixando vídeos (6000kbps, ~2.4 GB por speaker, ~82 GB total)..."
-for n in "${SPEAKERS[@]}"; do
+log "Baixando vídeos (6000kbps, ~2.4 GB por speaker)..."
+for n in $(effective_speakers); do
     spk="s${n}"
     out_dir="${RAW_VIDEO_DIR}/${spk}"
 
@@ -87,7 +87,6 @@ for n in "${SPEAKERS[@]}"; do
     _check "$p2" 104857600
 
     log "  ${spk} extraindo..."
-    # partes são um tar dividido — concatenar e extrair direto para o diretório do speaker
     cat "$p1" "$p2" | tar -xf - -C "${RAW_VIDEO_DIR}/"
     rm -f "$p1" "$p2"
     log "  [OK] ${spk}"

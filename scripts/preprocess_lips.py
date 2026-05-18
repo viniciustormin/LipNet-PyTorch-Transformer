@@ -112,11 +112,11 @@ def _process_video(args: tuple) -> tuple[str, str]:
     Extract frames from one MPG video, detect landmarks, crop lips.
     Returns (video_rel_path, status_message).
     """
-    video_path, out_dir, device = args
+    video_path, raw_dir, out_dir, device = args
 
-    # e.g.  raw_videos/s14/video/mpg_6000/srwt9p.mpg
-    #  ->   lip/s14/video/mpg_6000/srwt9p/
-    rel = os.path.relpath(video_path, os.path.dirname(os.path.dirname(out_dir)))
+    # e.g.  raw_dir=raw_videos/s1  video=raw_videos/s1/video/mpg_6000/srwt9p.mpg
+    #  ->   out_dir/video/mpg_6000/srwt9p/
+    rel = os.path.relpath(video_path, raw_dir)
     rel_noext = os.path.splitext(rel)[0]
     save_dir = os.path.join(out_dir, rel_noext)
 
@@ -193,7 +193,7 @@ def main(args):
     print(f'Device     : {args.device}')
     print()
 
-    tasks = [(v, args.out_dir, args.device) for v in videos]
+    tasks = [(v, args.raw_dir, args.out_dir, args.device) for v in videos]
 
     if args.n_workers == 1:
         for i, task in enumerate(tasks):
