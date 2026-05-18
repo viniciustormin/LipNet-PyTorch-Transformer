@@ -1,22 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name=grid-download
-#SBATCH --partition=h100n3
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=8G
-#SBATCH --time=UNLIMITED
-#SBATCH --output=../../logs/%x_%j.log
-#SBATCH --error=../../logs/%x_%j.err
+# Download do GRID Corpus — rode direto no terminal, sem SLURM (não precisa de GPU):
+#   bash scripts/slurm/download_grid.sh
+#
+# O download é só wget; não faz sentido alocar nó GPU para isso.
 
 set -euo pipefail
 
-PROJECT_ROOT="${PROJECT_ROOT:-${SLURM_SUBMIT_DIR:-}}"
-COMMON_SH="${PROJECT_ROOT}/scripts/slurm/common.sh"
-
-[[ -f "${COMMON_SH}" ]] || { echo "ERRO: rode 'sbatch scripts/slurm/download_grid.sh' a partir da raiz do repositório." >&2; exit 1; }
-export PROJECT_ROOT="$(cd "$(dirname "${COMMON_SH}")/../.." && pwd)"
-# shellcheck source=/dev/null
-source "${COMMON_SH}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+source "${SCRIPT_DIR}/common.sh"
 
 log "=== Download GRID Corpus iniciado ==="
 log "Node: ${SLURMD_NODENAME:-local}"

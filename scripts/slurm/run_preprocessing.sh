@@ -2,12 +2,12 @@
 #SBATCH --job-name=grid-preprocess
 #SBATCH --partition=h100n3
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=80G
 #SBATCH --gres=gpu:h100:1
 #SBATCH --time=UNLIMITED
-#SBATCH --output=../../logs/%x_%j.log
-#SBATCH --error=../../logs/%x_%j.err
+#SBATCH --output=/raid/user_viniciustormin/logs/%x_%j.log
+#SBATCH --error=/raid/user_viniciustormin/logs/%x_%j.err
 
 set -euo pipefail
 
