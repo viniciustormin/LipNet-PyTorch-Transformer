@@ -1,27 +1,36 @@
 #!/bin/bash
 # =============================================================================
-# Download GRID Corpus raw videos + alignment files
+# SLURM job — Download GRID Corpus raw videos + alignment files
+#
+# Before submitting, set the correct partition:
+#   sinfo -o "%.18P %.5a %.10l %.6D %G"   # lista as partições disponíveis
+#
+# Submit:
+#   sbatch scripts/download_grid.sh
 #
 # Official site: http://spandh.dcs.shef.ac.uk/gridcorpus/
 # Total size: ~33 GB (videos) + ~20 MB (alignments)
-#
-# Usage (run on the cluster, NOT via SLURM — just an interactive download):
-#   bash scripts/download_grid.sh
-#
-# Or submit as a SLURM job with enough time (allow ~3-6h depending on bandwidth):
-#   sbatch --job-name=grid-download --ntasks=1 --cpus-per-task=4 \
-#          --mem=8G --time=06:00:00 \
-#          --output=logs/download_%j.log \
-#          scripts/download_grid.sh
 # =============================================================================
 
+#SBATCH --job-name=grid-download
+#SBATCH --partition=h100n3
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=06:00:00
+#SBATCH --output=logs/download_%j_stdout.log
+#SBATCH --error=logs/download_%j_stderr.log
+
 set -euo pipefail
+
+mkdir -p logs
 
 GRID_ROOT="/data/grid"
 RAW_VIDEO_DIR="${GRID_ROOT}/raw_videos"
 ALIGN_DIR="${GRID_ROOT}/GRID_align_txt"
 
-mkdir -p "$RAW_VIDEO_DIR" "$ALIGN_DIR" logs
+mkdir -p "$RAW_VIDEO_DIR" "$ALIGN_DIR"
 
 # Speakers s1–s34; s21 does not exist in GRID
 SPEAKERS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 26 27 28 29 30 31 32 33 34)
@@ -29,10 +38,11 @@ SPEAKERS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 26 27 2
 BASE_URL="http://spandh.dcs.shef.ac.uk/gridcorpus"
 
 echo "=== GRID Corpus download started at $(date) ==="
-echo "Destination: $GRID_ROOT"
+echo "Node        : $SLURMD_NODENAME"
+echo "Destination : $GRID_ROOT"
 
 # ---------------------------------------------------------------------------
-# 1. Download alignment files (small — ~20 MB total)
+# 1. Alignment files (small — ~20 MB total)
 # ---------------------------------------------------------------------------
 echo ""
 echo "--- Downloading alignment files ---"
@@ -52,11 +62,11 @@ for n in "${SPEAKERS[@]}"; do
 
     tar -xf "$out_tar" -C "$ALIGN_DIR/"
     rm -f "$out_tar"
-    echo "  [OK] ${spk} alignments extracted to ${ALIGN_DIR}/${spk}/"
+    echo "  [OK] ${spk} alignments → ${ALIGN_DIR}/${spk}/"
 done
 
 # ---------------------------------------------------------------------------
-# 2. Download videos (heavy — ~1 GB per speaker, ~33 GB total)
+# 2. Videos (~1 GB per speaker, ~33 GB total)
 # ---------------------------------------------------------------------------
 echo ""
 echo "--- Downloading videos ---"
@@ -78,11 +88,9 @@ for n in "${SPEAKERS[@]}"; do
     echo "  Extracting ${spk}..."
     unzip -q "$out_zip" -d "${RAW_VIDEO_DIR}/"
     rm -f "$out_zip"
-    echo "  [OK] ${spk} videos extracted to ${out_dir}/"
+    echo "  [OK] ${spk} videos → ${out_dir}/"
 done
 
 echo ""
 echo "=== Download complete at $(date) ==="
-echo ""
-echo "Next step — extract frames and crop lips:"
-echo "  sbatch scripts/run_preprocessing.sh"
+echo "Next step: sbatch scripts/run_preprocessing.sh"
