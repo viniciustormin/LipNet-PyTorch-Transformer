@@ -1,0 +1,13 @@
+[lipnet-macos 2026-05-18 02:49:59] Log salvo em: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_024959.log
+[lipnet-macos 2026-05-18 02:49:59] Para acompanhar em outro terminal: tail -f /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_024959.log
+[lipnet-macos 2026-05-18 02:49:59] === Setup: instalando dependências ===
+[lipnet-macos 2026-05-18 02:49:59] Instalando/verificando dependências...
+[lipnet-macos 2026-05-18 02:49:59] Dependências prontas.
+[lipnet-macos 2026-05-18 02:49:59] Device: auto  |  Speakers: 1  |  Models: gru transformer
+[lipnet-macos 2026-05-18 02:49:59] Epochs: 50  |  Batch: 4  |  LR: 1e-4
+[lipnet-macos 2026-05-18 02:49:59] === Etapa 0: Baixando GRID Corpus (~2.4 GB por speaker) ===
+[lipnet-macos 2026-05-18 02:49:59] === Download GRID Corpus iniciado ===
+[lipnet-macos 2026-05-18 02:49:59] Speakers: 1  →  tag=s1
+[lipnet-macos 2026-05-18 02:49:59] Baixando word alignments...
+[lipnet-macos 2026-05-18 02:49:59]   s1 alignments (~190 KB)...
+curl: (3) URL rejected: Malformed input to a URL function

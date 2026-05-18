@@ -1,0 +1,17 @@
+[lipnet-macos 2026-05-18 02:47:48] Log salvo em: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_024748.log
+[lipnet-macos 2026-05-18 02:47:48] Para acompanhar: tail -f /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_024748.log
+[lipnet-macos 2026-05-18 02:47:48] === Setup: instalando dependências ===
+[lipnet-macos 2026-05-18 02:47:48] Criando venv com uv...
+Using CPython 3.13.7
+Creating virtual environment at: .venv
+Activate with: source .venv/bin/activate
+[lipnet-macos 2026-05-18 02:47:48] Instalando/verificando dependências...
+[lipnet-macos 2026-05-18 02:47:59] Dependências prontas.
+[lipnet-macos 2026-05-18 02:47:59] Device: auto  |  Speakers: 1  |  Models: gru transformer
+[lipnet-macos 2026-05-18 02:47:59] Epochs: 50  |  Batch: 4  |  LR: 1e-4
+[lipnet-macos 2026-05-18 02:47:59] === Etapa 1: Extraindo frames e recortando lips (device=cpu) ===
+[lipnet-macos 2026-05-18 02:47:59]   AVISO: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/data/grid/raw_videos/s1 não encontrado — pulando s1
+[lipnet-macos 2026-05-18 02:47:59]   Baixe os dados primeiro: bash scripts/macos/download_grid.sh
+[lipnet-macos 2026-05-18 02:47:59] === Etapa 1 concluída ===
+[lipnet-macos 2026-05-18 02:47:59] Data lists: 734 treino / 255 validação (speakers: 1)
+scripts/macos/run_all.sh: line 95: === Etapa $((step + 1))/$((total_models + 1)) — Treinando LipNet-${model^^} (device=${DEVICE}) ===: bad substitution

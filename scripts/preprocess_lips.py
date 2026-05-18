@@ -20,6 +20,12 @@ Requirements (install once inside the container):
 import argparse
 import math
 import os
+
+# Disable TorchDynamo/TorchInductor before any torch import.
+# face_alignment tries to torch.compile its model, which fails when the
+# project path contains spaces (clang++ receives unquoted path tokens).
+os.environ.setdefault('TORCHDYNAMO_DISABLE', '1')
+
 import subprocess
 import sys
 import tempfile

@@ -7,3 +7,4 @@ lip
 data/grid/
 checkpoints/
 results/
+.venv/

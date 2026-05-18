@@ -31,6 +31,23 @@ from dataset import MyDataset
 from models import LipNetGRU, LipNetTransformer
 
 
+def _get_device(requested: str) -> torch.device:
+    if requested == 'auto':
+        if torch.cuda.is_available():
+            return torch.device('cuda')
+        if torch.backends.mps.is_available():
+            return torch.device('mps')
+        return torch.device('cpu')
+    return torch.device(requested)
+
+
+def _synchronize(device: torch.device):
+    if device.type == 'cuda':
+        torch.cuda.synchronize()
+    elif device.type == 'mps':
+        torch.mps.synchronize()
+
+
 # ---------------------------------------------------------------------------
 # Utilities
 # ---------------------------------------------------------------------------
@@ -65,28 +82,29 @@ def load_model(model_type: str, ckpt_path: str, args) -> nn.Module:
 # Evaluation
 # ---------------------------------------------------------------------------
 
-def evaluate(model: nn.Module, args) -> dict:
+def evaluate(model: nn.Module, args, device: torch.device) -> dict:
     """Run inference on the validation set; return WER, CER, avg loss."""
-    model = model.cuda()
+    model = model.to(device)
     dataset = MyDataset(
         args.video_path, args.anno_path, args.val_list,
         args.vid_padding, args.txt_padding, 'test',
     )
     loader = DataLoader(
         dataset, batch_size=args.batch_size, shuffle=False,
-        num_workers=args.num_workers, pin_memory=True,
+        num_workers=args.num_workers, pin_memory=(device.type == 'cuda'),
     )
     crit = nn.CTCLoss(zero_infinity=True)
 
     all_preds, all_truths = [], []
     losses = []
 
+    nb = device.type == 'cuda'
     with torch.no_grad():
         for batch in loader:
-            vid = batch['vid'].cuda(non_blocking=True)
-            txt = batch['txt'].cuda(non_blocking=True)
-            vid_len = batch['vid_len'].cuda(non_blocking=True)
-            txt_len = batch['txt_len'].cuda(non_blocking=True)
+            vid = batch['vid'].to(device, non_blocking=nb)
+            txt = batch['txt'].to(device, non_blocking=nb)
+            vid_len = batch['vid_len'].to(device, non_blocking=nb)
+            txt_len = batch['txt_len'].to(device, non_blocking=nb)
 
             y = model(vid)
             loss = crit(
@@ -115,20 +133,21 @@ def evaluate(model: nn.Module, args) -> dict:
 # Inference latency benchmark
 # ---------------------------------------------------------------------------
 
-def benchmark_inference(model: nn.Module, args, n_warmup: int = 10, n_runs: int = 50) -> float:
-    """Return mean inference time (seconds) per single sample on GPU."""
-    model = model.cuda().eval()
-    dummy = torch.randn(1, 3, args.vid_padding, 64, 128).cuda()
+def benchmark_inference(model: nn.Module, args, device: torch.device,
+                        n_warmup: int = 10, n_runs: int = 50) -> float:
+    """Return mean inference time (seconds) per single sample."""
+    model = model.to(device).eval()
+    dummy = torch.randn(1, 3, args.vid_padding, 64, 128).to(device)
 
     with torch.no_grad():
         for _ in range(n_warmup):
             model(dummy)
-        torch.cuda.synchronize()
+        _synchronize(device)
 
         t0 = time.perf_counter()
         for _ in range(n_runs):
             model(dummy)
-        torch.cuda.synchronize()
+        _synchronize(device)
 
     return (time.perf_counter() - t0) / n_runs
 
@@ -223,16 +242,18 @@ def main(args):
     gru_params   = count_parameters(gru_model)
     trans_params = count_parameters(trans_model)
 
+    device = _get_device(args.device)
+
     # Inference latency
     print('Benchmarking inference speed...')
-    gru_latency   = benchmark_inference(gru_model,   args)
-    trans_latency = benchmark_inference(trans_model, args)
+    gru_latency   = benchmark_inference(gru_model,   args, device)
+    trans_latency = benchmark_inference(trans_model, args, device)
 
     # WER / CER via jiwer
     print('Evaluating GRU on validation set...')
-    gru_metrics = evaluate(gru_model, args)
+    gru_metrics = evaluate(gru_model, args, device)
     print('Evaluating Transformer on validation set...')
-    trans_metrics = evaluate(trans_model, args)
+    trans_metrics = evaluate(trans_model, args, device)
 
     # Load training histories
     with open(args.gru_hist) as f:
@@ -305,11 +326,14 @@ def parse_args():
 
     p.add_argument('--out_dir', default='results', help='Where to save PNGs and summary.json')
     p.add_argument('--gpu', default='0')
+    p.add_argument('--device', default='auto',
+                   help='Device: auto (cuda→mps→cpu), cuda, mps, or cpu')
 
     return p.parse_args()
 
 
 if __name__ == '__main__':
     args = parse_args()
-    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+    if args.device in ('cuda', 'auto'):
+        os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     main(args)

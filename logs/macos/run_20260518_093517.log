@@ -1,0 +1,54 @@
+[lipnet-macos 2026-05-18 09:35:17] Log salvo em: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_093517.log
+[lipnet-macos 2026-05-18 09:35:17] Para acompanhar em outro terminal: tail -f /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_093517.log
+[lipnet-macos 2026-05-18 09:35:17] === Setup: instalando dependências ===
+[lipnet-macos 2026-05-18 09:35:17] Instalando/verificando dependências...
+[lipnet-macos 2026-05-18 09:35:17] Dependências prontas.
+[lipnet-macos 2026-05-18 09:35:17] Device: auto  |  Speakers: 1  |  Models: gru transformer
+[lipnet-macos 2026-05-18 09:35:17] Epochs: 50  |  Batch: 4  |  LR: 1e-4
+[lipnet-macos 2026-05-18 09:35:17] === Etapa 0: Download IGNORADO (SKIP_DOWNLOAD=1) ===
+[lipnet-macos 2026-05-18 09:35:17] === Etapa 1: Pré-processamento IGNORADO (SKIP_PREPROCESS=1) ===
+[lipnet-macos 2026-05-18 09:35:17] Data lists: 734 treino / 255 validação (speakers: 1)
+[lipnet-macos 2026-05-18 09:35:17] === Etapa 2/3 — Treinando LipNet-GRU (device=auto) ===
+
+============================================================
+  Model : GRU
+  Params: 6,638,844
+  Train : 734 samples
+  Epochs: 1 → 50
+============================================================
+
+Traceback (most recent call last):
+  File "/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/train_transformer.py", line 323, in <module>
+    train(args)
+    ~~~~~^^^^^^
+  File "/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/train_transformer.py", line 207, in train
+    loss = crit(
+        y.transpose(0, 1).log_softmax(-1),
+        txt, vid_len.view(-1), txt_len.view(-1),
+    )
+  File "/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/.venv/lib/python3.13/site-packages/torch/nn/modules/loss.py", line 2110, in forward
+    return F.ctc_loss(
+           ~~~~~~~~~~^
+        log_probs,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        self.zero_infinity,
+        ^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/.venv/lib/python3.13/site-packages/torch/nn/functional.py", line 3111, in ctc_loss
+    return torch.ctc_loss(
+           ~~~~~~~~~~~~~~^
+        log_probs,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        zero_infinity,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+NotImplementedError: The operator 'aten::_ctc_loss' is not currently implemented for the MPS device. If you want this op to be considered for addition please comment on https://github.com/pytorch/pytorch/issues/141287 and mention use-case, that resulted in missing op as well as commit hash 7661cd9c6b841b62b7f411aa52ec51f05457263b. As a temporary fix, you can set the environment variable `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a fallback for this op. WARNING: this will be slower than running natively on MPS.

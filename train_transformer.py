@@ -27,6 +27,16 @@ from dataset import MyDataset
 from models import LipNetGRU, LipNetTransformer
 
 
+def _get_device(requested: str) -> torch.device:
+    if requested == 'auto':
+        if torch.cuda.is_available():
+            return torch.device('cuda')
+        if torch.backends.mps.is_available():
+            return torch.device('mps')
+        return torch.device('cpu')
+    return torch.device(requested)
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -35,9 +45,10 @@ def set_seed(seed: int):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
 
 def build_model(args) -> nn.Module:
@@ -54,14 +65,15 @@ def build_model(args) -> nn.Module:
     )
 
 
-def make_loader(dataset, batch_size: int, num_workers: int, shuffle: bool) -> DataLoader:
+def make_loader(dataset, batch_size: int, num_workers: int, shuffle: bool,
+                device: torch.device | None = None) -> DataLoader:
     return DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=shuffle,
         num_workers=num_workers,
         drop_last=False,
-        pin_memory=True,
+        pin_memory=(device is not None and device.type == 'cuda'),
     )
 
 
@@ -75,22 +87,22 @@ def ctc_decode(y: torch.Tensor):
 # Validation
 # ---------------------------------------------------------------------------
 
-def validate(net: nn.Module, args) -> tuple[float, float, float]:
+def validate(net: nn.Module, args, device: torch.device) -> tuple[float, float, float]:
     net.eval()
     dataset = MyDataset(
         args.video_path, args.anno_path, args.val_list,
         args.vid_padding, args.txt_padding, 'test',
     )
-    loader = make_loader(dataset, args.batch_size, args.num_workers, shuffle=False)
+    loader = make_loader(dataset, args.batch_size, args.num_workers, shuffle=False, device=device)
     crit = nn.CTCLoss(zero_infinity=True)
 
     losses, wer_list, cer_list = [], [], []
     with torch.no_grad():
         for batch in loader:
-            vid = batch['vid'].cuda()
-            txt = batch['txt'].cuda()
-            vid_len = batch['vid_len'].cuda()
-            txt_len = batch['txt_len'].cuda()
+            vid = batch['vid'].to(device)
+            txt = batch['txt'].to(device)
+            vid_len = batch['vid_len'].to(device)
+            txt_len = batch['txt_len'].to(device)
 
             y = net(vid)
             loss = crit(
@@ -116,10 +128,33 @@ def train(args):
     set_seed(args.seed)
     os.makedirs(args.save_dir, exist_ok=True)
 
-    model = build_model(args).cuda()
+    device = _get_device(args.device)
+    model = build_model(args).to(device)
 
-    if args.weights:
-        ckpt = torch.load(args.weights, map_location='cuda')
+    history_path = os.path.join(args.save_dir, 'history.json')
+    last_ckpt = os.path.join(args.save_dir, f'{args.model}_last.pt')
+
+    # Auto-resume: if a previous run was interrupted, continue from last checkpoint
+    history = {
+        'model': args.model,
+        'train_loss': [], 'val_loss': [],
+        'val_wer': [], 'val_cer': [],
+        'epochs': [],
+    }
+    start_epoch = 0
+    best_wer = float('inf')
+
+    if os.path.isfile(last_ckpt) and os.path.isfile(history_path):
+        print(f'Resuming from checkpoint: {last_ckpt}')
+        model.load_state_dict(torch.load(last_ckpt, map_location=device))
+        with open(history_path) as f:
+            history = json.load(f)
+        start_epoch = len(history['epochs'])
+        if history['val_wer']:
+            best_wer = min(history['val_wer'])
+        print(f'  Resumed at epoch {start_epoch + 1}/{args.max_epoch}  (best WER so far: {best_wer:.4f})')
+    elif args.weights:
+        ckpt = torch.load(args.weights, map_location=device)
         missing, unexpected = model.load_state_dict(ckpt, strict=False)
         print(f'Loaded weights from {args.weights}')
         if missing:
@@ -127,48 +162,45 @@ def train(args):
         if unexpected:
             print(f'  Unexpected   : {unexpected}')
 
-    net = nn.DataParallel(model).cuda()
+    if start_epoch >= args.max_epoch:
+        print(f'Training already complete ({start_epoch} epochs done).')
+        return
+
+    net = nn.DataParallel(model).to(device) if device.type == 'cuda' else model
 
     train_dataset = MyDataset(
         args.video_path, args.anno_path, args.train_list,
         args.vid_padding, args.txt_padding, 'train',
     )
-    loader = make_loader(train_dataset, args.batch_size, args.num_workers, shuffle=True)
+    loader = make_loader(train_dataset, args.batch_size, args.num_workers, shuffle=True, device=device)
 
     optimizer = optim.Adam(
         model.parameters(), lr=args.lr, weight_decay=0.0, amsgrad=True,
     )
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode='min', factor=0.5, patience=5, verbose=True,
+        optimizer, mode='min', factor=0.5, patience=5,
     )
     crit = nn.CTCLoss(zero_infinity=True)
-
-    history = {
-        'model': args.model,
-        'train_loss': [], 'val_loss': [],
-        'val_wer': [], 'val_cer': [],
-        'epochs': [],
-    }
-    best_wer = float('inf')
-    history_path = os.path.join(args.save_dir, 'history.json')
 
     print(f'\n{"="*60}')
     print(f'  Model : {args.model.upper()}')
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f'  Params: {n_params:,}')
     print(f'  Train : {len(train_dataset)} samples')
+    print(f'  Epochs: {start_epoch + 1} → {args.max_epoch}')
     print(f'{"="*60}\n')
 
-    for epoch in range(args.max_epoch):
+    for epoch in range(start_epoch, args.max_epoch):
         net.train()
         epoch_losses = []
         t0 = time.time()
 
         for i, batch in enumerate(loader):
-            vid = batch['vid'].cuda(non_blocking=True)
-            txt = batch['txt'].cuda(non_blocking=True)
-            vid_len = batch['vid_len'].cuda(non_blocking=True)
-            txt_len = batch['txt_len'].cuda(non_blocking=True)
+            nb = device.type == 'cuda'
+            vid = batch['vid'].to(device, non_blocking=nb)
+            txt = batch['txt'].to(device, non_blocking=nb)
+            vid_len = batch['vid_len'].to(device, non_blocking=nb)
+            txt_len = batch['txt_len'].to(device, non_blocking=nb)
 
             optimizer.zero_grad()
             y = net(vid)
@@ -191,7 +223,7 @@ def train(args):
                     print(f'    truth: {t}')
 
         train_loss = float(np.mean(epoch_losses))
-        val_loss, val_wer, val_cer = validate(net, args)
+        val_loss, val_wer, val_cer = validate(net, args, device)
         scheduler.step(val_loss)
 
         elapsed = time.time() - t0
@@ -278,11 +310,14 @@ def parse_args():
     p.add_argument('--weights', default='',
                    help='Optional pretrained weights to fine-tune from')
     p.add_argument('--gpu', default='0')
+    p.add_argument('--device', default='auto',
+                   help='Device: auto (cuda→mps→cpu), cuda, mps, or cpu')
 
     return p.parse_args()
 
 
 if __name__ == '__main__':
     args = parse_args()
-    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+    if args.device in ('cuda', 'auto'):
+        os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     train(args)

@@ -1,0 +1,690 @@
+[lipnet-macos 2026-05-18 09:37:20] Log salvo em: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_093720.log
+[lipnet-macos 2026-05-18 09:37:20] Para acompanhar em outro terminal: tail -f /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_093720.log
+[lipnet-macos 2026-05-18 09:37:20] === Setup: instalando dependências ===
+[lipnet-macos 2026-05-18 09:37:20] Instalando/verificando dependências...
+[lipnet-macos 2026-05-18 09:37:20] Dependências prontas.
+[lipnet-macos 2026-05-18 09:37:20] Device: auto  |  Speakers: 1  |  Models: gru transformer
+[lipnet-macos 2026-05-18 09:37:20] Epochs: 50  |  Batch: 4  |  LR: 1e-4
+[lipnet-macos 2026-05-18 09:37:20] === Etapa 0: Download IGNORADO (SKIP_DOWNLOAD=1) ===
+[lipnet-macos 2026-05-18 09:37:20] === Etapa 1: Pré-processamento IGNORADO (SKIP_PREPROCESS=1) ===
+[lipnet-macos 2026-05-18 09:37:20] Data lists: 734 treino / 255 validação (speakers: 1)
+[lipnet-macos 2026-05-18 09:37:20] === Etapa 2/3 — Treinando LipNet-GRU (device=auto) ===
+
+============================================================
+  Model : GRU
+  Params: 6,638,844
+  Train : 734 samples
+  Epochs: 1 → 50
+============================================================
+
+/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/.venv/lib/python3.13/site-packages/torch/nn/functional.py:3111: UserWarning: The operator 'aten::_ctc_loss' is not currently supported on the MPS backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at /Users/runner/work/pytorch/pytorch/aten/src/ATen/mps/MPSFallback.mm:34.)
+  return torch.ctc_loss(
+  [1/50] iter 100/184 loss=2.8114
+    pred : 
+    truth: BIN RED WITH N ONE SOON
+    pred : 
+    truth: PLACE RED IN V FIVE SOON
+Epoch   1/50 | train_loss=2.9579 | val_loss=2.8035 | val_wer=1.0000 | val_cer=1.0000 | t=107.0s
+  -> New best WER: 1.0000  (checkpoint saved)
+  [2/50] iter 100/184 loss=2.7497
+    pred : 
+    truth: BIN GREEN IN T SIX PLEASE
+    pred : 
+    truth: SET BLUE BY N SIX NOW
+Epoch   2/50 | train_loss=2.7013 | val_loss=2.6823 | val_wer=0.9948 | val_cer=0.9626 | t=104.2s
+  -> New best WER: 0.9948  (checkpoint saved)
+  [3/50] iter 100/184 loss=2.6186
+    pred : LN
+    truth: BIN GREEN WITH B SEVEN AGAIN
+    pred : OOON
+    truth: LAY BLUE BY E THREE AGAIN
+Epoch   3/50 | train_loss=2.6265 | val_loss=2.6339 | val_wer=0.9948 | val_cer=0.9626 | t=104.6s
+  [4/50] iter 100/184 loss=2.4891
+    pred : LON
+    truth: PLACE RED WITH X NINE AGAIN
+    pred : W
+    truth: PLACE WHITE AT X SEVEN AGAIN
+Epoch   4/50 | train_loss=2.5595 | val_loss=2.5130 | val_wer=1.0000 | val_cer=0.9378 | t=104.5s
+  [5/50] iter 100/184 loss=2.5425
+    pred : B ON
+    truth: SET GREEN BY J ZERO NOW
+    pred : LON
+    truth: LAY BLUE BY E TWO PLEASE
+Epoch   5/50 | train_loss=2.4839 | val_loss=2.4214 | val_wer=1.0000 | val_cer=0.8516 | t=104.8s
+  [6/50] iter 100/184 loss=2.3643
+    pred : BIN AON
+    truth: PLACE WHITE BY X NINE SOON
+    pred : LA ON
+    truth: BIN GREEN BY B TWO PLEASE
+Epoch   6/50 | train_loss=2.3703 | val_loss=2.2500 | val_wer=1.0000 | val_cer=0.8473 | t=104.9s
+  [7/50] iter 100/184 loss=2.2246
+    pred : SA RON
+    truth: SET WHITE IN B TWO NOW
+    pred : SLA AON
+    truth: LAY RED WITH S ZERO PLEASE
+Epoch   7/50 | train_loss=2.2361 | val_loss=2.0875 | val_wer=0.9941 | val_cer=0.7861 | t=105.4s
+  -> New best WER: 0.9941  (checkpoint saved)
+  [8/50] iter 100/184 loss=2.1635
+    pred : BLAE RE ON
+    truth: PLACE GREEN BY K NINE AGAIN
+    pred : PLA REE AASN
+    truth: LAY RED WITH Z TWO NOW
+Epoch   8/50 | train_loss=2.0763 | val_loss=1.9103 | val_wer=1.0000 | val_cer=0.7367 | t=106.4s
+  [9/50] iter 100/184 loss=1.9448
+    pred : LNY RLE T AON
+    truth: BIN BLUE BY F EIGHT PLEASE
+    pred : BIAY RE ON
+    truth: SET BLUE BY U ZERO NOW
+Epoch   9/50 | train_loss=1.9175 | val_loss=1.7726 | val_wer=1.0000 | val_cer=0.7253 | t=106.0s
+  [10/50] iter 100/184 loss=1.7076
+    pred : BLAT BHE E AOW
+    truth: PLACE WHITE IN D ONE AGAIN
+    pred : PLEC BRE T E AON
+    truth: LAY WHITE AT Z ZERO NOW
+Epoch  10/50 | train_loss=1.8224 | val_loss=1.6767 | val_wer=0.9993 | val_cer=0.7410 | t=106.1s
+  [11/50] iter 100/184 loss=1.8002
+    pred : BLAC BEN N ON
+    truth: PLACE WHITE BY Q FIVE SOON
+    pred : SIE WRE NSN
+    truth: LAY RED IN K TWO NOW
+Epoch  11/50 | train_loss=1.7470 | val_loss=1.6276 | val_wer=0.9974 | val_cer=0.7158 | t=106.2s
+  [12/50] iter 100/184 loss=1.6767
+    pred : PLATE BE E ON
+    truth: PLACE BLUE BY P FIVE AGAIN
+    pred : PLAC WRED POW
+    truth: LAY RED IN Y ONE SOON
+Epoch  12/50 | train_loss=1.7057 | val_loss=1.5867 | val_wer=0.9967 | val_cer=0.6960 | t=106.0s
+  [13/50] iter 100/184 loss=1.6493
+    pred : BLAT BRE T AON
+    truth: LAY GREEN IN Z THREE SOON
+    pred : SLATE WRIE T NAOE
+    truth: BIN WHITE WITH N EIGHT PLEASE
+Epoch  13/50 | train_loss=1.6597 | val_loss=1.5552 | val_wer=0.9993 | val_cer=0.7012 | t=106.0s
+  [14/50] iter 100/184 loss=1.5329
+    pred : BIAN WRHIE B OON
+    truth: SET WHITE BY C THREE AGAIN
+    pred : BIEC GRE T NSN
+    truth: BIN BLUE WITH S EIGHT NOW
+Epoch  14/50 | train_loss=1.6275 | val_loss=1.5216 | val_wer=0.9837 | val_cer=0.6730 | t=106.2s
+  -> New best WER: 0.9837  (checkpoint saved)
+  [15/50] iter 100/184 loss=1.4216
+    pred : BLAN GRUE N IN
+    truth: LAY RED WITH Z THREE SOON
+    pred : BLAT WHIE N OE
+    truth: BIN WHITE AT T FIVE AGAIN
+Epoch  15/50 | train_loss=1.6032 | val_loss=1.4979 | val_wer=0.9961 | val_cer=0.6788 | t=106.0s
+  [16/50] iter 100/184 loss=1.5149
+    pred : PLAY WRE T E AON
+    truth: PLACE RED WITH X NINE AGAIN
+    pred : LAC GLEEN T E AON
+    truth: SET BLUE AT T NINE AGAIN
+Epoch  16/50 | train_loss=1.5839 | val_loss=1.4810 | val_wer=0.9797 | val_cer=0.6865 | t=106.3s
+  -> New best WER: 0.9797  (checkpoint saved)
+  [17/50] iter 100/184 loss=1.7131
+    pred : LECE GREN T E AON
+    truth: BIN RED AT S EIGHT PLEASE
+    pred : BLAT BRE BN ON
+    truth: PLACE WHITE BY Q SIX PLEASE
+Epoch  17/50 | train_loss=1.5674 | val_loss=1.4659 | val_wer=0.9784 | val_cer=0.6800 | t=106.3s
+  -> New best WER: 0.9784  (checkpoint saved)
+  [18/50] iter 100/184 loss=1.6029
+    pred : PLACE GLE Y E EAON
+    truth: BIN RED AT S EIGHT PLEASE
+    pred : BLAY WHITE Y NIW
+    truth: BIN WHITE AT A TWO PLEASE
+Epoch  18/50 | train_loss=1.5479 | val_loss=1.4384 | val_wer=0.9771 | val_cer=0.6567 | t=106.7s
+  -> New best WER: 0.9771  (checkpoint saved)
+  [19/50] iter 100/184 loss=1.5527
+    pred : LAC GRE E PEOW
+    truth: BIN RED IN Z EIGHT PLEASE
+    pred : SIEC GLED GAIW
+    truth: SET RED IN N FOUR NOW
+Epoch  19/50 | train_loss=1.5353 | val_loss=1.4183 | val_wer=0.9595 | val_cer=0.6498 | t=106.5s
+  -> New best WER: 0.9595  (checkpoint saved)
+  [20/50] iter 100/184 loss=1.5489
+    pred : PIAT WHITE T OON
+    truth: PLACE WHITE AT Q TWO PLEASE
+    pred : LAT RIE Y E NAIN
+    truth: PLACE BLUE AT I FOUR NOW
+Epoch  20/50 | train_loss=1.5231 | val_loss=1.4116 | val_wer=0.9869 | val_cer=0.6551 | t=106.6s
+  [21/50] iter 100/184 loss=1.3562
+    pred : BIAY GREE WT E ASN
+    truth: SET RED AT H SEVEN AGAIN
+    pred : PIAT WHITED AT OAOE
+    truth: PLACE WHITE AT D FIVE AGAIN
+Epoch  21/50 | train_loss=1.5044 | val_loss=1.4079 | val_wer=0.9216 | val_cer=0.6318 | t=106.4s
+  -> New best WER: 0.9216  (checkpoint saved)
+  [22/50] iter 100/184 loss=1.4970
+    pred : PLEC BREN T OSN
+    truth: BIN GREEN WITH U SIX NOW
+    pred : BAT WHIE A OOE
+    truth: PLACE WHITE WITH K FOUR NOW
+Epoch  22/50 | train_loss=1.4938 | val_loss=1.4023 | val_wer=0.9673 | val_cer=0.6049 | t=106.6s
+  [23/50] iter 100/184 loss=1.4874
+    pred : BAT WRIED AIT SNOW
+    truth: LAY WHITE AT L FOUR PLEASE
+    pred : AN RIE Y E GOW
+    truth: SET RED AT H FIVE SOON
+Epoch  23/50 | train_loss=1.4851 | val_loss=1.3765 | val_wer=0.9431 | val_cer=0.5935 | t=106.7s
+  [24/50] iter 100/184 loss=1.3403
+    pred : BAC WHITE IY E OAOW
+    truth: BIN WHITE BY N FIVE AGAIN
+    pred : BAYE WHITE Y E OON
+    truth: BIN WHITE IN T ONE AGAIN
+Epoch  24/50 | train_loss=1.4662 | val_loss=1.3619 | val_wer=0.9614 | val_cer=0.6026 | t=106.3s
+  [25/50] iter 100/184 loss=1.3546
+    pred : SLAC BLEE BIT OAON
+    truth: SET BLUE WITH H NINE AGAIN
+    pred : BLAC RUE AIT PGSE
+    truth: LAY RED AT K EIGHT PLEASE
+Epoch  25/50 | train_loss=1.4649 | val_loss=1.3739 | val_wer=0.9033 | val_cer=0.5867 | t=106.5s
+  -> New best WER: 0.9033  (checkpoint saved)
+  [26/50] iter 100/184 loss=1.5249
+    pred : BLAT WHITE IY FE OON
+    truth: BIN RED BY G FIVE AGAIN
+    pred : BAY BREEN AT E PEIN
+    truth: LAY RED WITH L FIVE SOON
+Epoch  26/50 | train_loss=1.4608 | val_loss=1.3788 | val_wer=0.9516 | val_cer=0.6141 | t=106.4s
+  [27/50] iter 100/184 loss=1.4649
+    pred : LAN BREEN AT E SOIE
+    truth: SET BLUE BY N SIX NOW
+    pred : PATE GLEEN IT E GON
+    truth: SET BLUE IN T FIVE AGAIN
+Epoch  27/50 | train_loss=1.4474 | val_loss=1.3335 | val_wer=0.9137 | val_cer=0.5565 | t=106.3s
+  [28/50] iter 100/184 loss=1.4792
+    pred : PAC GLUE IT E SEASN
+    truth: BIN BLUE IN Z THREE AGAIN
+    pred : PLAC WHIE AY E OOW
+    truth: SET WHITE WITH P TWO NOW
+Epoch  28/50 | train_loss=1.4383 | val_loss=1.3318 | val_wer=0.9307 | val_cer=0.6021 | t=106.5s
+  [29/50] iter 100/184 loss=1.4335
+    pred : PEC WHIE BTY POOW
+    truth: BIN BLUE BY S SEVEN AGAIN
+    pred : SANE GLEE AT E SOON
+    truth: PLACE GREEN WITH L ONE SOON
+Epoch  29/50 | train_loss=1.4379 | val_loss=1.3489 | val_wer=0.9261 | val_cer=0.5793 | t=106.6s
+  [30/50] iter 100/184 loss=1.3647
+    pred : BAT GLEEN ITN E AOON
+    truth: SET GREEN AT I SEVEN SOON
+    pred : LAT WHITE IT GAIN
+    truth: PLACE WHITE IN X TWO PLEASE
+Epoch  30/50 | train_loss=1.4220 | val_loss=1.3327 | val_wer=0.9261 | val_cer=0.5717 | t=106.6s
+  [31/50] iter 100/184 loss=1.4974
+    pred : LAC BRE BY E OAON
+    truth: LAY RED AT Y SIX PLEASE
+    pred : BAT GREEN ITH EE AEON
+    truth: LAY BLUE IN X FOUR NOW
+Epoch  31/50 | train_loss=1.4051 | val_loss=1.3195 | val_wer=0.9059 | val_cer=0.5903 | t=106.5s
+  [32/50] iter 100/184 loss=1.4446
+    pred : SIY BREEN IT ZX GON
+    truth: LAY RED BY Z ZERO PLEASE
+    pred : LIY WHITE IN O OOW
+    truth: LAY WHITE BY L NINE AGAIN
+Epoch  32/50 | train_loss=1.4095 | val_loss=1.3111 | val_wer=0.9503 | val_cer=0.5716 | t=106.5s
+  [33/50] iter 100/184 loss=1.3014
+    pred : PEN GREEN IT EAON
+    truth: PLACE BLUE WITH D ONE AGAIN
+    pred : BET BLEN WBT O POAIN
+    truth: BIN RED WITH T SEVEN AGAIN
+Epoch  33/50 | train_loss=1.4004 | val_loss=1.3096 | val_wer=0.9124 | val_cer=0.5678 | t=106.6s
+  [34/50] iter 100/184 loss=1.4070
+    pred : SACE BREEN BT FE PGAON
+    truth: LAY BLUE BY Y TWO NOW
+    pred : BAYE GLEN IT TO NON
+    truth: BIN GREEN WITH U SIX NOW
+Epoch  34/50 | train_loss=1.3936 | val_loss=1.2954 | val_wer=0.9150 | val_cer=0.5912 | t=106.6s
+  [35/50] iter 100/184 loss=1.3891
+    pred : LAC BRE IT E POON
+    truth: BIN RED AT S SEVEN SOON
+    pred : SET GREE IT E GOW
+    truth: BIN GREEN IN G SIX NOW
+Epoch  35/50 | train_loss=1.3922 | val_loss=1.2951 | val_wer=0.8843 | val_cer=0.5691 | t=106.7s
+  -> New best WER: 0.8843  (checkpoint saved)
+  [36/50] iter 100/184 loss=1.4703
+    pred : LANE BRUED IT POOW
+    truth: PLACE BLUE IN O FOUR NOW
+    pred : LAC GREE AT ANASN
+    truth: BIN RED AT M FOUR PLEASE
+Epoch  36/50 | train_loss=1.3853 | val_loss=1.2895 | val_wer=0.9497 | val_cer=0.5636 | t=106.6s
+  [37/50] iter 100/184 loss=1.3790
+    pred : BAN BRUEN IT E SGAON
+    truth: BIN BLUE AT S ZERO NOW
+    pred : PAN GLEEN IT E PLGAON
+    truth: PLACE GREEN AT Q SIX NOW
+Epoch  37/50 | train_loss=1.3803 | val_loss=1.2979 | val_wer=0.8791 | val_cer=0.5641 | t=106.7s
+  -> New best WER: 0.8791  (checkpoint saved)
+  [38/50] iter 100/184 loss=1.4840
+    pred : PEN GREE IT J SOOW
+    truth: LAY GREEN BY S EIGHT PLEASE
+    pred : LIN GREED AY E NAOE
+    truth: BIN BLUE BY M TWO PLEASE
+Epoch  38/50 | train_loss=1.3777 | val_loss=1.2831 | val_wer=0.9216 | val_cer=0.5690 | t=106.5s
+  [39/50] iter 100/184 loss=1.3943
+    pred : PAC WHIE BY EE EON
+    truth: LAY WHITE BY F TWO NOW
+    pred : LAN GREEN IT E OON
+    truth: PLACE RED AT C SIX NOW
+Epoch  39/50 | train_loss=1.3698 | val_loss=1.2727 | val_wer=0.9542 | val_cer=0.6096 | t=106.5s
+  [40/50] iter 100/184 loss=1.3423
+    pred : SLAC GRUE BT ZE E NAOE
+    truth: BIN GREEN BY O ZERO PLEASE
+    pred : PAY GLEEN IT TE OSN
+    truth: SET GREEN AT C THREE SOON
+Epoch  40/50 | train_loss=1.3580 | val_loss=1.2815 | val_wer=0.9209 | val_cer=0.5645 | t=106.6s
+  [41/50] iter 100/184 loss=1.2964
+    pred : BAN GREEN IT H E NON
+    truth: LAY BLUE BY Q EIGHT NOW
+    pred : PAT GREED IT E POAOE
+    truth: BIN RED WITH N THREE AGAIN
+Epoch  41/50 | train_loss=1.3558 | val_loss=1.2879 | val_wer=0.9131 | val_cer=0.5728 | t=106.5s
+  [42/50] iter 100/184 loss=1.4858
+    pred : BAT REED IT E POAON
+    truth: PLACE RED BY Q ONE AGAIN
+    pred : SEY WHITED IN EE OON
+    truth: SET BLUE BY A EIGHT NOW
+Epoch  42/50 | train_loss=1.3479 | val_loss=1.2573 | val_wer=0.8980 | val_cer=0.5499 | t=106.5s
+  [43/50] iter 100/184 loss=1.3515
+    pred : LAN BRUEN BT FO PLGASN
+    truth: PLACE BLUE AT O NINE SOON
+    pred : BAT WHITE IN E OAIN
+    truth: SET WHITE IN O TWO PLEASE
+Epoch  43/50 | train_loss=1.3462 | val_loss=1.2511 | val_wer=0.9072 | val_cer=0.5609 | t=106.4s
+  [44/50] iter 100/184 loss=1.3528
+    pred : SAN RED BY R E OON
+    truth: LAY RED IN Y THREE AGAIN
+    pred : PLAN GLUED BY FE AEAON
+    truth: BIN BLUE BY M TWO PLEASE
+Epoch  44/50 | train_loss=1.3410 | val_loss=1.2505 | val_wer=0.9046 | val_cer=0.6023 | t=106.5s
+  [45/50] iter 100/184 loss=1.1986
+    pred : PAN WHITE IY I AEAON
+    truth: SET WHITE WITH I NINE SOON
+    pred : LAY WHITE AY SNOW
+    truth: SET WHITE AT I THREE AGAIN
+Epoch  45/50 | train_loss=1.3367 | val_loss=1.2537 | val_wer=0.9222 | val_cer=0.6015 | t=107.6s
+  [46/50] iter 100/184 loss=1.3642
+    pred : PAT GRUED AT J OON
+    truth: PLACE BLUE BY C SIX PLEASE
+    pred : SAY GLEE IN E OON
+    truth: LAY GREEN AT L EIGHT NOW
+Epoch  46/50 | train_loss=1.3355 | val_loss=1.2497 | val_wer=0.9111 | val_cer=0.5601 | t=107.1s
+  [47/50] iter 100/184 loss=1.2776
+    pred : LAC BREEN IT P SE EAOW
+    truth: SET GREEN AT P ZERO NOW
+    pred : SAT WHITE IN C E PEAON
+    truth: LAY WHITE IN E SIX PLEASE
+Epoch  47/50 | train_loss=1.3344 | val_loss=1.2412 | val_wer=0.8680 | val_cer=0.5546 | t=106.6s
+  -> New best WER: 0.8680  (checkpoint saved)
+  [48/50] iter 100/184 loss=1.2003
+    pred : PAY BLUEN IT Z SIE AOASN
+    truth: PLACE RED AT X ONE AGAIN
+    pred : BAY BREE BY E GAIN
+    truth: LAY GREEN BY M FIVE AGAIN
+Epoch  48/50 | train_loss=1.3170 | val_loss=1.2437 | val_wer=0.8588 | val_cer=0.5672 | t=106.9s
+  -> New best WER: 0.8588  (checkpoint saved)
+  [49/50] iter 100/184 loss=1.3843
+    pred : SEN RED BT Y O AGOW
+    truth: LAY RED BY R FOUR NOW
+    pred : BAY BRED AT EO POASN
+    truth: SET GREEN BY P FIVE SOON
+Epoch  49/50 | train_loss=1.3217 | val_loss=1.2392 | val_wer=0.9033 | val_cer=0.6041 | t=106.7s
+  [50/50] iter 100/184 loss=1.5020
+    pred : LAC BREED BT FIE AOON
+    truth: SET BLUE WITH O ONE SOON
+    pred : SAN WHIED IN EIN OAON
+    truth: BIN RED AT M TWO NOW
+Epoch  50/50 | train_loss=1.3103 | val_loss=1.2358 | val_wer=0.8902 | val_cer=0.5454 | t=106.9s
+
+Training complete. Best val WER = 0.8588
+Checkpoints and history saved to: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/checkpoints/s1/gru
+[lipnet-macos 2026-05-18 11:05:57] GRU concluído.
+[lipnet-macos 2026-05-18 11:05:57] === Etapa 3/3 — Treinando LipNet-TRANSFORMER (device=auto) ===
+/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/models/lipnet_transformer.py:88: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.transformer_encoder = nn.TransformerEncoder(
+
+============================================================
+  Model : TRANSFORMER
+  Params: 8,219,388
+  Train : 734 samples
+  Epochs: 1 → 50
+============================================================
+
+/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/.venv/lib/python3.13/site-packages/torch/nn/functional.py:3111: UserWarning: The operator 'aten::_ctc_loss' is not currently supported on the MPS backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at /Users/runner/work/pytorch/pytorch/aten/src/ATen/mps/MPSFallback.mm:34.)
+  return torch.ctc_loss(
+  [1/50] iter 100/184 loss=2.6276
+    pred : EI Y I E
+    truth: PLACE BLUE AT P ZERO PLEASE
+    pred : E E
+    truth: PLACE WHITE AT D TWO NOW
+Epoch   1/50 | train_loss=3.6773 | val_loss=1.6967 | val_wer=1.0000 | val_cer=0.6845 | t=93.7s
+  -> New best WER: 1.0000  (checkpoint saved)
+  [2/50] iter 100/184 loss=1.4119
+    pred : BN RED BN OI PLN
+    truth: BIN GREEN AT A NINE AGAIN
+    pred : LT RE I FI LOON
+    truth: PLACE RED IN V FIVE SOON
+Epoch   2/50 | train_loss=1.6786 | val_loss=1.4699 | val_wer=1.0000 | val_cer=0.6196 | t=90.1s
+  [3/50] iter 100/184 loss=1.5142
+    pred : PLAE GRE IY FEVE SOAON
+    truth: LAY GREEN IN L SIX PLEASE
+    pred : PLE RE AT FONE SOON
+    truth: PLACE WHITE AT Q TWO PLEASE
+Epoch   3/50 | train_loss=1.5174 | val_loss=1.4003 | val_wer=0.9765 | val_cer=0.6092 | t=91.1s
+  -> New best WER: 0.9765  (checkpoint saved)
+  [4/50] iter 100/184 loss=1.4655
+    pred : PLE GRE WT J TOE NOOW
+    truth: BIN GREEN BY U TWO NOW
+    pred : PE WRTE AT Y FEOE NOAON
+    truth: SET GREEN BY J TWO PLEASE
+Epoch   4/50 | train_loss=1.4334 | val_loss=1.3468 | val_wer=0.9536 | val_cer=0.5807 | t=90.9s
+  -> New best WER: 0.9536  (checkpoint saved)
+  [5/50] iter 100/184 loss=1.4108
+    pred : LE RE AT A TIRE AGAON
+    truth: BIN BLUE BY Z EIGHT NOW
+    pred : PE RED AT A TIXE NGAON
+    truth: SET GREEN BY J TWO PLEASE
+Epoch   5/50 | train_loss=1.4012 | val_loss=1.3749 | val_wer=0.9752 | val_cer=0.5960 | t=91.1s
+  [6/50] iter 100/184 loss=1.3328
+    pred : LE BLIE IT E FIRE NOW
+    truth: SET WHITE WITH C FIVE SOON
+    pred : BLE LUE BY C FIRE SOON
+    truth: SET GREEN WITH J SEVEN AGAIN
+Epoch   6/50 | train_loss=1.3792 | val_loss=1.3202 | val_wer=0.9935 | val_cer=0.5823 | t=91.4s
+  [7/50] iter 100/184 loss=1.3999
+    pred : LE BRUE AT L SIXE SOW
+    truth: LAY RED WITH L FIVE SOON
+    pred : LE BRUE IT C SINE SOON
+    truth: SET BLUE IN G FOUR NOW
+Epoch   7/50 | train_loss=1.3692 | val_loss=1.3630 | val_wer=0.9379 | val_cer=0.5950 | t=91.6s
+  -> New best WER: 0.9379  (checkpoint saved)
+  [8/50] iter 100/184 loss=1.4240
+    pred : SLY WRE AT Y SIXO AEASN
+    truth: BIN WHITE IN G TWO PLEASE
+    pred : LE RUED AY Y FIX LNOW
+    truth: LAY RED BY L ONE SOON
+Epoch   8/50 | train_loss=1.3446 | val_loss=1.3352 | val_wer=0.9974 | val_cer=0.5727 | t=91.0s
+  [9/50] iter 100/184 loss=1.4126
+    pred : PLE HUED AT J TIRE NOON
+    truth: LAY GREEN BY F NINE SOON
+    pred : SE BRE AT L EIN SOON
+    truth: BIN GREEN BY U TWO NOW
+Epoch   9/50 | train_loss=1.3481 | val_loss=1.3556 | val_wer=0.9797 | val_cer=0.5767 | t=91.0s
+  [10/50] iter 100/184 loss=1.3839
+    pred : BE WHIE BN K FIVE AGAIN
+    truth: PLACE BLUE AT I FIVE SOON
+    pred : SY WHIE BT X SIVE SEAIN
+    truth: SET BLUE IN T THREE SOON
+Epoch  10/50 | train_loss=1.3419 | val_loss=1.3070 | val_wer=0.9922 | val_cer=0.5888 | t=90.7s
+  [11/50] iter 100/184 loss=1.2144
+    pred : PE WHIE IT H TEVE AGON
+    truth: BIN GREEN AT A NINE AGAIN
+    pred : LE BREE IT H TERE AGASN
+    truth: PLACE BLUE IN I THREE AGAIN
+Epoch  11/50 | train_loss=1.3345 | val_loss=1.3224 | val_wer=0.8850 | val_cer=0.5773 | t=91.7s
+  -> New best WER: 0.8850  (checkpoint saved)
+  [12/50] iter 100/184 loss=1.3595
+    pred : BET BRUED IT R TIRE SEON
+    truth: LAY BLUE AT K ZERO NOW
+    pred : PE BRIED IN P TIRE LGON
+    truth: BIN WHITE IN M SEVEN AGAIN
+Epoch  12/50 | train_loss=1.3342 | val_loss=1.2900 | val_wer=0.9556 | val_cer=0.5959 | t=91.3s
+  [13/50] iter 100/184 loss=1.4865
+    pred : PLN BLUE IT Z FINE NEON
+    truth: LAY GREEN IN S ONE AGAIN
+    pred : BLN BLIE BY E FINE NEAON
+    truth: SET BLUE IN A TWO PLEASE
+Epoch  13/50 | train_loss=1.3326 | val_loss=1.3042 | val_wer=0.9967 | val_cer=0.5861 | t=90.8s
+  [14/50] iter 100/184 loss=1.1464
+    pred : PLE BREEN IN K TINE NEON
+    truth: LAY BLUE WITH K NINE SOON
+    pred : LAY GRIE IN K SIGE NGON
+    truth: PLACE GREEN AT D NINE SOON
+Epoch  14/50 | train_loss=1.3283 | val_loss=1.3023 | val_wer=0.9765 | val_cer=0.5847 | t=91.1s
+  [15/50] iter 100/184 loss=1.2773
+    pred : BIE HEE IT B TIVE NOON
+    truth: PLACE WHITE IN X THREE AGAIN
+    pred : BIN WHIE IT H TIOE NOAON
+    truth: PLACE RED AT C SEVEN SOON
+Epoch  15/50 | train_loss=1.3272 | val_loss=1.2991 | val_wer=0.9516 | val_cer=0.5873 | t=91.0s
+  [16/50] iter 100/184 loss=1.3490
+    pred : PY GLEE IT F TORE SOON
+    truth: PLACE RED WITH J NINE SOON
+    pred : LE BREE IT Y FORE SOON
+    truth: PLACE GREEN WITH E SIX NOW
+Epoch  16/50 | train_loss=1.3222 | val_loss=1.2872 | val_wer=0.9601 | val_cer=0.5875 | t=90.9s
+  [17/50] iter 100/184 loss=1.3757
+    pred : PLE WRIE IT R TIRE AGON
+    truth: BIN WHITE WITH A EIGHT NOW
+    pred : LE RE IT R TIRE AGON
+    truth: SET GREEN AT I SIX NOW
+Epoch  17/50 | train_loss=1.3165 | val_loss=1.3001 | val_wer=0.9431 | val_cer=0.5788 | t=90.9s
+  [18/50] iter 100/184 loss=1.3831
+    pred : PLE GRUE IT K TINE LOAON
+    truth: LAY WHITE IN R FOUR PLEASE
+    pred : PAE BRUE AT H TINE SNAON
+    truth: BIN GREEN AT T EIGHT NOW
+Epoch  18/50 | train_loss=1.3123 | val_loss=1.3039 | val_wer=0.9954 | val_cer=0.5873 | t=91.0s
+  [19/50] iter 100/184 loss=1.4076
+    pred : LE WLUE IT Z FERE SOON
+    truth: LAY RED AT Y SIX PLEASE
+    pred : PLAE WREE IT U FERE SOON
+    truth: SET RED AT B ONE SOON
+Epoch  19/50 | train_loss=1.3122 | val_loss=1.3204 | val_wer=0.9111 | val_cer=0.5806 | t=90.8s
+  [20/50] iter 100/184 loss=1.2783
+    pred : PE WRUE IN C TINE SEON
+    truth: SET BLUE IN T THREE SOON
+    pred : PLE WRUE IN Y TINE NEON
+    truth: PLACE RED IN P TWO PLEASE
+Epoch  20/50 | train_loss=1.3037 | val_loss=1.2893 | val_wer=0.9745 | val_cer=0.5723 | t=90.9s
+  [21/50] iter 100/184 loss=1.1406
+    pred : SLE GREN AT F TIOE AEASN
+    truth: PLACE GREEN IN Q FIVE AGAIN
+    pred : LE GREEN IT Y FIVE PAEON
+    truth: PLACE GREEN AT Q EIGHT PLEASE
+Epoch  21/50 | train_loss=1.3035 | val_loss=1.3288 | val_wer=0.9516 | val_cer=0.6408 | t=91.2s
+  [22/50] iter 100/184 loss=1.2540
+    pred : LAE BRIE IT J FINE SEON
+    truth: LAY GREEN WITH M SIX NOW
+    pred : PLAE BRIEN IT Q FIOE LOON
+    truth: SET GREEN AT I NINE AGAIN
+Epoch  22/50 | train_loss=1.3043 | val_loss=1.2846 | val_wer=0.9928 | val_cer=0.5857 | t=91.0s
+  [23/50] iter 100/184 loss=1.2224
+    pred : PLE WHEE AT X SINE LOAON
+    truth: BIN GREEN WITH B FIVE SOON
+    pred : PE GRE IT Q FIRE SOAON
+    truth: LAY WHITE BY L EIGHT PLEASE
+Epoch  23/50 | train_loss=1.3004 | val_loss=1.3100 | val_wer=0.9961 | val_cer=0.5999 | t=90.9s
+  [24/50] iter 100/184 loss=1.2382
+    pred : PLAE GRUE IT Q FIVE SOON
+    truth: PLACE BLUE AT I SEVEN AGAIN
+    pred : SAE BRUE IY F FERE SOON
+    truth: PLACE GREEN IN D FOUR NOW
+Epoch  24/50 | train_loss=1.3005 | val_loss=1.2852 | val_wer=0.9967 | val_cer=0.5997 | t=91.2s
+  [25/50] iter 100/184 loss=1.2403
+    pred : LAE WREE IT K FIVE SOAON
+    truth: PLACE WHITE WITH E THREE AGAIN
+    pred : PLAE GREEN IT I TINE NEAON
+    truth: BIN WHITE WITH H THREE SOON
+Epoch  25/50 | train_loss=1.2997 | val_loss=1.3028 | val_wer=0.9961 | val_cer=0.5738 | t=91.2s
+  [26/50] iter 100/184 loss=1.2604
+    pred : LAE WRIE AT A TOVE AOON
+    truth: BIN WHITE AT M NINE SOON
+    pred : LAE GREE IT A SINE NOON
+    truth: LAY RED BY L TWO PLEASE
+Epoch  26/50 | train_loss=1.3001 | val_loss=1.2889 | val_wer=0.9490 | val_cer=0.5773 | t=91.0s
+  [27/50] iter 100/184 loss=1.3958
+    pred : BLE BRUE IT D TO LOAOE
+    truth: SET WHITE BY I FOUR NOW
+    pred : SAE BRIED IN O SINO LOON
+    truth: PLACE GREEN BY Y FOUR NOW
+Epoch  27/50 | train_loss=1.2973 | val_loss=1.2838 | val_wer=0.9856 | val_cer=0.5792 | t=91.3s
+  [28/50] iter 100/184 loss=1.3788
+    pred : LAE REED IT F TIOE PSEAOE
+    truth: BIN GREEN IN G NINE AGAIN
+    pred : BLAE GREED BT X FIVE SOAON
+    truth: SET GREEN BY C SEVEN SOON
+Epoch  28/50 | train_loss=1.2950 | val_loss=1.2862 | val_wer=0.9222 | val_cer=0.5742 | t=91.3s
+  [29/50] iter 100/184 loss=1.2975
+    pred : PE WREE IT F FIRE NGOW
+    truth: SET GREEN AT C THREE SOON
+    pred : PE GRED IT J TIRE NGON
+    truth: LAY RED AT E FIVE AGAIN
+Epoch  29/50 | train_loss=1.2958 | val_loss=1.2875 | val_wer=0.9954 | val_cer=0.5676 | t=91.1s
+  [30/50] iter 100/184 loss=1.3562
+    pred : LE BRUE IT U FENE SOOE
+    truth: PLACE GREEN IN D SIX PLEASE
+    pred : SE BRUEN IN K FEVE LOON
+    truth: SET WHITE AT O SIX PLEASE
+Epoch  30/50 | train_loss=1.2978 | val_loss=1.2895 | val_wer=0.9745 | val_cer=0.5676 | t=91.1s
+  [31/50] iter 100/184 loss=1.3719
+    pred : PAE WHIE IT T TIVE SOON
+    truth: BIN BLUE BY M TWO PLEASE
+    pred : PAE WHITE IT J TIVE SOON
+    truth: LAY WHITE IN E FOUR NOW
+Epoch  31/50 | train_loss=1.2906 | val_loss=1.2704 | val_wer=0.9922 | val_cer=0.5756 | t=91.7s
+  [32/50] iter 100/184 loss=1.2082
+    pred : SAE BLUE AT I TIVE NGON
+    truth: LAY BLUE BY Y TWO NOW
+    pred : LAE GLUE AT I FIVE NGON
+    truth: PLACE GREEN WITH Z ONE AGAIN
+Epoch  32/50 | train_loss=1.2879 | val_loss=1.2684 | val_wer=0.9935 | val_cer=0.5761 | t=91.3s
+  [33/50] iter 100/184 loss=1.2279
+    pred : LAE RUED IT R TIRE LEASN
+    truth: SET WHITE IN U SEVEN AGAIN
+    pred : LE BRUE IT E TINE LEAIN
+    truth: BIN GREEN WITH U EIGHT PLEASE
+Epoch  33/50 | train_loss=1.2834 | val_loss=1.2779 | val_wer=0.9797 | val_cer=0.5792 | t=91.5s
+  [34/50] iter 100/184 loss=1.2470
+    pred : LAE BRUE IT O TWOE NOON
+    truth: PLACE RED IN P THREE AGAIN
+    pred : PAE GRED IN X TIV NOON
+    truth: LAY RED IN Q NINE AGAIN
+Epoch  34/50 | train_loss=1.2855 | val_loss=1.2738 | val_wer=0.9967 | val_cer=0.5691 | t=91.6s
+  [35/50] iter 100/184 loss=1.2592
+    pred : LAE REED IT O TIRE SOON
+    truth: SET WHITE IN H SEVEN SOON
+    pred : PAE GREED IT L FIVE SOON
+    truth: LAY WHITE AT L TWO NOW
+Epoch  35/50 | train_loss=1.2839 | val_loss=1.2909 | val_wer=0.9967 | val_cer=0.5702 | t=91.6s
+  [36/50] iter 100/184 loss=1.3481
+    pred : BAY WRIE IT L TOR NON
+    truth: PLACE GREEN WITH E NINE AGAIN
+    pred : LAN GRIE IT X FIN NON
+    truth: SET BLUE AT N THREE SOON
+Epoch  36/50 | train_loss=1.2888 | val_loss=1.2687 | val_wer=0.9418 | val_cer=0.5699 | t=91.3s
+  [37/50] iter 100/184 loss=1.2390
+    pred : BAE WREED IN Q FINE NEON
+    truth: BIN GREEN BY B THREE AGAIN
+    pred : BIE WRIED IT D SIV NOON
+    truth: LAY RED WITH S ZERO PLEASE
+Epoch  37/50 | train_loss=1.2801 | val_loss=1.2664 | val_wer=0.9536 | val_cer=0.5578 | t=91.4s
+  [38/50] iter 100/184 loss=1.2346
+    pred : SAE WRIE IT Y SIVE NAON
+    truth: PLACE BLUE WITH J TWO NOW
+    pred : SAE BREE IT Y FEVE SGON
+    truth: LAY RED IN K FOUR PLEASE
+Epoch  38/50 | train_loss=1.2848 | val_loss=1.3072 | val_wer=0.9105 | val_cer=0.5967 | t=90.9s
+  [39/50] iter 100/184 loss=1.4130
+    pred : LAE BRUE IT I SIVE SGAON
+    truth: LAY RED BY L ONE SOON
+    pred : LAE WRE IT R TIRE SEAON
+    truth: BIN GREEN WITH O TWO NOW
+Epoch  39/50 | train_loss=1.2841 | val_loss=1.2631 | val_wer=0.9967 | val_cer=0.5606 | t=90.2s
+  [40/50] iter 100/184 loss=1.2477
+    pred : BAE BREE IN T FIVE AOOW
+    truth: LAY RED IN E ZERO PLEASE
+    pred : BE GREE IT T TIRE SOON
+    truth: LAY GREEN IN Z FOUR PLEASE
+Epoch  40/50 | train_loss=1.2768 | val_loss=1.2766 | val_wer=0.9752 | val_cer=0.5764 | t=91.0s
+  [41/50] iter 100/184 loss=1.3021
+    pred : LAE BREEN IT Z TINE NOON
+    truth: SET WHITE WITH I NINE SOON
+    pred : LAE RE IT N FINE SOON
+    truth: PLACE RED IN P TWO PLEASE
+Epoch  41/50 | train_loss=1.2788 | val_loss=1.2649 | val_wer=0.9412 | val_cer=0.5653 | t=91.2s
+  [42/50] iter 100/184 loss=1.2529
+    pred : PAE WREE IT C TIVE NGAON
+    truth: SET WHITE WITH C SIX PLEASE
+    pred : SAE GRUE IT T TIVE SEON
+    truth: PLACE WHITE AT Q TWO PLEASE
+Epoch  42/50 | train_loss=1.2803 | val_loss=1.2902 | val_wer=0.9542 | val_cer=0.5816 | t=90.7s
+  [43/50] iter 100/184 loss=1.3507
+    pred : SAE GREE IY L FINE NEON
+    truth: PLACE BLUE WITH J FOUR PLEASE
+    pred : SAE BREE BT T FINE NON
+    truth: LAY GREEN AT Z EIGHT PLEASE
+Epoch  43/50 | train_loss=1.2801 | val_loss=1.2706 | val_wer=0.9791 | val_cer=0.5582 | t=91.8s
+  [44/50] iter 100/184 loss=1.2606
+    pred : SAE WRIED IT A FIVE LOON
+    truth: BIN RED WITH N ONE SOON
+    pred : SLAE RE IT Z FINE SOON
+    truth: BIN WHITE WITH N EIGHT PLEASE
+Epoch  44/50 | train_loss=1.2722 | val_loss=1.2784 | val_wer=0.9163 | val_cer=0.5777 | t=90.9s
+  [45/50] iter 100/184 loss=1.2973
+    pred : PAE GREEN BY Y FIVE NEON
+    truth: BIN GREEN BY O ZERO PLEASE
+    pred : PAN WRED IT K TINE NGAON
+    truth: SET WHITE IN O ONE SOON
+Epoch  45/50 | train_loss=1.2740 | val_loss=1.2618 | val_wer=0.9882 | val_cer=0.5753 | t=91.7s
+  [46/50] iter 100/184 loss=1.3122
+    pred : SE WHUE IT Q FINE LOAON
+    truth: BIN RED IN S THREE SOON
+    pred : SAE WHUE IT Q FINE LOAON
+    truth: LAY GREEN WITH A ZERO PLEASE
+Epoch  46/50 | train_loss=1.2737 | val_loss=1.2742 | val_wer=0.9863 | val_cer=0.5741 | t=91.2s
+  [47/50] iter 100/184 loss=1.2179
+    pred : PAE WRIED IT A TIVE SOAOW
+    truth: LAY GREEN WITH T TWO PLEASE
+    pred : BAE RIED IY J TIVE LEAON
+    truth: LAY RED WITH L SEVEN AGAIN
+Epoch  47/50 | train_loss=1.2738 | val_loss=1.2690 | val_wer=0.9418 | val_cer=0.5545 | t=91.3s
+  [48/50] iter 100/184 loss=1.2623
+    pred : BIE BRUEN IT Z FIVE NOAON
+    truth: LAY BLUE BY Y TWO NOW
+    pred : PLAE WRIE AT P SIVE AGIN
+    truth: PLACE RED BY X FIVE AGAIN
+Epoch  48/50 | train_loss=1.2698 | val_loss=1.2521 | val_wer=0.9569 | val_cer=0.5761 | t=91.2s
+  [49/50] iter 100/184 loss=1.2499
+    pred : PLAE BREE IY Y ZIRE AGAIN
+    truth: PLACE GREEN IN K ZERO PLEASE
+    pred : LAE REN IT Q EINE AGAON
+    truth: SET WHITE WITH P THREE SOON
+Epoch  49/50 | train_loss=1.2650 | val_loss=1.2652 | val_wer=0.9222 | val_cer=0.5668 | t=91.3s
+  [50/50] iter 100/184 loss=1.2710
+    pred : PLAE BLUE BT Z TINE AGAIN
+    truth: PLACE WHITE BY Q FOUR NOW
+    pred : PLAY GRE BT F TIXE AGAIN
+    truth: SET BLUE BY U ZERO NOW
+Epoch  50/50 | train_loss=1.2508 | val_loss=1.2343 | val_wer=0.8856 | val_cer=0.5470 | t=91.4s
+
+Training complete. Best val WER = 0.8850
+Checkpoints and history saved to: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/checkpoints/s1/transformer
+[lipnet-macos 2026-05-18 12:22:00] TRANSFORMER concluído.
+[lipnet-macos 2026-05-18 12:22:00] === Etapa final — Comparando GRU vs Transformer ===
+/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/models/lipnet_transformer.py:88: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.transformer_encoder = nn.TransformerEncoder(
+Loading models...
+Benchmarking inference speed...
+Evaluating GRU on validation set...
+/Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/.venv/lib/python3.13/site-packages/torch/nn/functional.py:3111: UserWarning: The operator 'aten::_ctc_loss' is not currently supported on the MPS backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at /Users/runner/work/pytorch/pytorch/aten/src/ATen/mps/MPSFallback.mm:34.)
+  return torch.ctc_loss(
+Evaluating Transformer on validation set...
+Saved: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/results/s1/training_curves.png
+Saved: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/results/s1/loss_curves.png
+Saved: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/results/s1/wer_curves.png
+
+============================================================
+Metric                                  GRU    Transformer
+============================================================
+Parameters                        6,638,844      8,219,388
+Inference time (ms)                   23.40          15.69
+Val Loss                             1.2437         1.3224
+WER (jiwer)                          0.8588         0.8850
+CER (jiwer)                          0.5688         0.5796
+============================================================
+
+Full summary saved to: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/results/s1/summary.json
+[lipnet-macos 2026-05-18 12:23:02] Comparação concluída. Resultados em: /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/results/s1/
+[lipnet-macos 2026-05-18 12:23:02] === Pipeline completo! ===
+[lipnet-macos 2026-05-18 12:23:02] Checkpoints : /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/checkpoints/s1/
+[lipnet-macos 2026-05-18 12:23:02] Resultados  : /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/results/s1/
+[lipnet-macos 2026-05-18 12:23:02] Log         : /Users/viniciustormin/02 Areas/UFG/Visão Computacional/LipNet-PyTorch-Transformer/logs/macos/run_20260518_093720.log
