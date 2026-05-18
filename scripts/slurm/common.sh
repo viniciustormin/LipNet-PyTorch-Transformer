@@ -12,7 +12,7 @@ IMAGES_ROOT="${IMAGES_ROOT:-${WORKSPACE_ROOT}/images}"
 GLOBAL_LOG_ROOT="${GLOBAL_LOG_ROOT:-${WORKSPACE_ROOT}/logs}"
 IMAGE_PATH="${IMAGE_PATH:-${IMAGES_ROOT}/pytorch_2.8.0-cuda12.8-cudnn9-devel.sif}"
 
-GRID_ROOT="${GRID_ROOT:-/data/grid}"
+GRID_ROOT="${GRID_ROOT:-${PROJECT_ROOT}/data/grid}"
 RAW_VIDEO_DIR="${RAW_VIDEO_DIR:-${GRID_ROOT}/raw_videos}"
 LIP_DIR="${LIP_DIR:-${GRID_ROOT}/lip}"
 ALIGN_DIR="${ALIGN_DIR:-${GRID_ROOT}/GRID_align_txt}"
@@ -44,10 +44,10 @@ detect_container_runtime() {
 }
 
 build_container_args() {
+    # GRID_ROOT já está dentro de WORKSPACE_ROOT, então um único bind cobre tudo
     CONTAINER_ARGS=(
         "${CONTAINER_RUNTIME}" exec --nv
         --bind "${WORKSPACE_ROOT}:${WORKSPACE_ROOT}"
-        --bind "${GRID_ROOT}:${GRID_ROOT}"
         --pwd "${PROJECT_ROOT}"
         "${IMAGE_PATH}"
     )
