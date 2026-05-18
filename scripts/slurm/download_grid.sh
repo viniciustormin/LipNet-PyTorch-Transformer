@@ -86,9 +86,13 @@ for n in $(effective_speakers); do
     _wget "${BASE_URL}/${spk}/video/${spk}.mpg_6000.part2.tar" -O "$p2"
     _check "$p2" 104857600
 
-    log "  ${spk} extraindo..."
-    cat "$p1" "$p2" | tar -xf - -C "${RAW_VIDEO_DIR}/"
-    rm -f "$p1" "$p2"
+    log "  ${spk} extraindo part1..."
+    tar -xf "$p1" -C "${RAW_VIDEO_DIR}/"
+    rm -f "$p1"
+
+    log "  ${spk} extraindo part2..."
+    tar -xf "$p2" -C "${RAW_VIDEO_DIR}/"
+    rm -f "$p2"
     log "  [OK] ${spk}"
 done
 
