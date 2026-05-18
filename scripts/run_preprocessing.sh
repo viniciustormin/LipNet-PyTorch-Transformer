@@ -15,8 +15,8 @@
 #SBATCH --gres=gpu:h100:1
 #SBATCH --mem=32G
 #SBATCH --time=08:00:00
-#SBATCH --output=logs/preprocess_%j_stdout.log
-#SBATCH --error=logs/preprocess_%j_stderr.log
+#SBATCH --output=/raid/%u/logs/preprocess_%j_stdout.log
+#SBATCH --error=/raid/%u/logs/preprocess_%j_stderr.log
 
 SIF="/raid/$USER/images/pytorch_2.8.0-cuda12.8-cudnn9-devel.sif"
 

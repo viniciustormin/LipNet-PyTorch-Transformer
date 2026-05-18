@@ -19,12 +19,10 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=06:00:00
-#SBATCH --output=logs/download_%j_stdout.log
-#SBATCH --error=logs/download_%j_stderr.log
+#SBATCH --output=/raid/%u/logs/download_%j_stdout.log
+#SBATCH --error=/raid/%u/logs/download_%j_stderr.log
 
 set -euo pipefail
-
-mkdir -p logs
 
 GRID_ROOT="/data/grid"
 RAW_VIDEO_DIR="${GRID_ROOT}/raw_videos"

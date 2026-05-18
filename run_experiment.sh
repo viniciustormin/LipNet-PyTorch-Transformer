@@ -14,8 +14,8 @@
 #SBATCH --gres=gpu:h100:1
 #SBATCH --mem=32G
 #SBATCH --time=04:00:00
-#SBATCH --output=logs/slurm_%j_stdout.log
-#SBATCH --error=logs/slurm_%j_stderr.log
+#SBATCH --output=/raid/%u/logs/slurm_%j_stdout.log
+#SBATCH --error=/raid/%u/logs/slurm_%j_stderr.log
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=YOUR_EMAIL@example.com   # <-- update this
 
