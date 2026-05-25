@@ -22,8 +22,19 @@ mkdir -p "${RAW_VIDEO_DIR}" "${ALIGN_DIR}"
 
 BASE_URL="https://spandh.dcs.shef.ac.uk/gridcorpus"
 
-_wget() {
-    wget --no-check-certificate -L --show-progress --continue "$@"
+_download() {
+    local url="$1" out="$2"
+    local dir; dir="$(dirname "$out")"
+    local file; file="$(basename "$out")"
+    mkdir -p "$dir"
+    if command -v aria2c >/dev/null 2>&1; then
+        aria2c -x 16 -s 16 --continue=true --no-check-certificate \
+            -d "$dir" -o "$file" "$url"
+    elif command -v wget >/dev/null 2>&1; then
+        wget --no-check-certificate -L --show-progress --continue "$url" -O "$out"
+    else
+        curl -L --insecure -C - --progress-bar -o "$out" "$url"
+    fi
 }
 
 _check() {
@@ -51,7 +62,7 @@ for n in $(effective_speakers); do
 
     log "  ${spk} alignments (~190 KB)..."
     tmp="${ALIGN_DIR}/${spk}.tar"
-    _wget "${BASE_URL}/${spk}/align/${spk}.tar" -O "$tmp"
+    _download "${BASE_URL}/${spk}/align/${spk}.tar" "$tmp"
     _check "$tmp" 1024
 
     mkdir -p "${ALIGN_DIR}/${spk}"
@@ -78,12 +89,12 @@ for n in $(effective_speakers); do
 
     log "  ${spk} part1 (~1.2 GB)..."
     p1="${out_dir}/${spk}.mpg_6000.part1.tar"
-    _wget "${BASE_URL}/${spk}/video/${spk}.mpg_6000.part1.tar" -O "$p1"
+    _download "${BASE_URL}/${spk}/video/${spk}.mpg_6000.part1.tar" "$p1"
     _check "$p1" 104857600   # mínimo 100 MB
 
     log "  ${spk} part2 (~1.2 GB)..."
     p2="${out_dir}/${spk}.mpg_6000.part2.tar"
-    _wget "${BASE_URL}/${spk}/video/${spk}.mpg_6000.part2.tar" -O "$p2"
+    _download "${BASE_URL}/${spk}/video/${spk}.mpg_6000.part2.tar" "$p2"
     _check "$p2" 104857600
 
     log "  ${spk} extraindo part1..."
