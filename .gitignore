@@ -8,3 +8,4 @@ data/grid/
 checkpoints/
 results/
 .venv/
+logs/

@@ -27,7 +27,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from jiwer import wer as jiwer_wer, cer as jiwer_cer
 
-from dataset import MyDataset
+from dataset import MyDataset, ctc_beam_decode  # [v2] beam search
 from models import LipNetGRU, LipNetTransformer
 
 
@@ -56,9 +56,11 @@ def count_parameters(model: nn.Module) -> int:
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def ctc_decode(y: torch.Tensor):
-    y = y.argmax(-1)
-    return [MyDataset.ctc_arr2txt(y[i], start=1) for i in range(y.size(0))]
+# [v2] beam search decode (substituí greedy)
+def ctc_decode(y: torch.Tensor) -> list:
+    """CTC beam search decode. y: (B, T, C)."""
+    log_probs = y.log_softmax(-1).cpu()
+    return [ctc_beam_decode(log_probs[i]) for i in range(y.size(0))]
 
 
 def load_model(model_type: str, ckpt_path: str, args) -> nn.Module:

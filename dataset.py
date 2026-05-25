@@ -1,4 +1,5 @@
 # encoding: utf-8
+import math as _math
 import numpy as np
 import glob
 import time
@@ -13,6 +14,58 @@ import copy
 import json
 import random
 import editdistance
+
+
+# [v2] CTC beam search decode — puro Python, sem libs externas
+def ctc_beam_decode(log_probs: torch.Tensor, beam_width: int = 10, blank: int = 0) -> str:
+    """
+    CTC beam search decode.
+    log_probs: (T, vocab_size) log-softmax probs em CPU.
+    blank=0; labels começam em 1 (MyDataset.letters[c-1] para c>=1).
+    """
+    NEG_INF = float('-inf')
+
+    def _logaddexp(a: float, b: float) -> float:
+        if a == NEG_INF:
+            return b
+        if b == NEG_INF:
+            return a
+        return max(a, b) + _math.log1p(_math.exp(-abs(a - b)))
+
+    # beams: prefix_tuple → (log_prob_blank, log_prob_nonblank)
+    beams: dict = {(): (0.0, NEG_INF)}
+    V = log_probs.shape[1]
+
+    for t in range(log_probs.shape[0]):
+        lp = log_probs[t]
+        new_beams: dict = {}
+
+        for prefix, (pb, pnb) in beams.items():
+            p_total = _logaddexp(pb, pnb)
+
+            # estende com blank
+            new_pb = p_total + lp[blank].item()
+            cur = new_beams.get(prefix, (NEG_INF, NEG_INF))
+            new_beams[prefix] = (_logaddexp(cur[0], new_pb), cur[1])
+
+            # estende com cada label não-blank
+            for c in range(1, V):
+                lp_c = lp[c].item()
+                # mesmo label no final: só acumula de caminhos que terminam em blank
+                new_pnb = (pb + lp_c) if (prefix and prefix[-1] == c) else (p_total + lp_c)
+                new_prefix = prefix + (c,)
+                cur = new_beams.get(new_prefix, (NEG_INF, NEG_INF))
+                new_beams[new_prefix] = (cur[0], _logaddexp(cur[1], new_pnb))
+
+        # mantém apenas os top beam_width beams
+        beams = dict(sorted(
+            new_beams.items(),
+            key=lambda x: _logaddexp(x[1][0], x[1][1]),
+            reverse=True,
+        )[:beam_width])
+
+    best = max(beams, key=lambda p: _logaddexp(beams[p][0], beams[p][1]))
+    return ''.join(MyDataset.letters[c - 1] for c in best).strip()
 
     
 class MyDataset(Dataset):
