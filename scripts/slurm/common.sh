@@ -113,7 +113,7 @@ setup_extra_deps() {
         pip install --user --quiet --force-reinstall opencv-python-headless
     "${CONTAINER_RUNTIME}" exec --nv "${IMAGE_PATH}" \
         pip install --user --quiet \
-            jiwer editdistance matplotlib tensorboardX tqdm
+            jiwer editdistance matplotlib tensorboardX tqdm imageio-ffmpeg
 }
 
 # =============================================================================

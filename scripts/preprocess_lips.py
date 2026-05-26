@@ -34,6 +34,12 @@ from multiprocessing import Pool, current_process
 import cv2
 import numpy as np
 
+try:
+    import imageio_ffmpeg
+    _FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
+except ImportError:
+    _FFMPEG = 'ffmpeg'
+
 
 # ---------------------------------------------------------------------------
 # Face geometry helpers (same logic as demo.py / extract_lip.py)
@@ -133,7 +139,7 @@ def _process_video(args: tuple) -> tuple[str, str]:
 
     # --- Step 1: extract frames with ffmpeg ---
     with tempfile.TemporaryDirectory() as tmp:
-        cmd = ['ffmpeg', '-y', '-i', video_path,
+        cmd = [_FFMPEG, '-y', '-i', video_path,
                '-qscale:v', '2', '-r', '25',
                os.path.join(tmp, '%d.jpg')]
         result = subprocess.run(cmd, capture_output=True)
