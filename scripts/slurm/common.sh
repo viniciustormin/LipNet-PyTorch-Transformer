@@ -110,8 +110,10 @@ container_exec() { "${CONTAINER_ARGS[@]}" "$@"; }
 setup_extra_deps() {
     log "Instalando dependências extras..."
     "${CONTAINER_RUNTIME}" exec --nv "${IMAGE_PATH}" \
+        pip install --user --quiet --force-reinstall opencv-python-headless
+    "${CONTAINER_RUNTIME}" exec --nv "${IMAGE_PATH}" \
         pip install --user --quiet \
-            jiwer editdistance matplotlib tensorboardX tqdm opencv-python-headless
+            jiwer editdistance matplotlib tensorboardX tqdm
 }
 
 # =============================================================================
