@@ -145,9 +145,10 @@ def train(args):
 
     # [h100] Mixed precision
     use_amp = (device.type == 'cuda')
-    scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+    scaler = torch.amp.GradScaler('cuda', enabled=use_amp)
     if use_amp:
-        print('  AMP bf16: enabled')
+        torch.set_float32_matmul_precision('high')
+        print('  AMP bf16: enabled  |  TF32: enabled')
 
     history_path = os.path.join(args.save_dir, 'history.json')
     last_ckpt = os.path.join(args.save_dir, f'{args.model}_last.pt')
