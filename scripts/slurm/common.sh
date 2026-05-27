@@ -126,38 +126,29 @@ make_data_lists() {
     local src_train="${PROJECT_ROOT}/data/overlap_train.txt"
     local src_val="${PROJECT_ROOT}/data/overlap_val.txt"
 
-    # Determina quais speakers usar
-    local candidates
-    if [[ "${SPEAKERS}" == "all" ]]; then
-        candidates="${ALL_SPEAKERS}"
-    else
-        candidates="${SPEAKERS}"
-    fi
-
-    # Filtra para só incluir speakers com lip/ preprocessado
-    local pattern="" ready="" skipped=""
-    for n in ${candidates}; do
-        if [[ -d "${LIP_DIR}/s${n}" ]] && [[ $(find "${LIP_DIR}/s${n}" -name "*.jpg" 2>/dev/null | wc -l) -gt 0 ]]; then
-            pattern="${pattern}${pattern:+|}^s${n}/"
-            ready="${ready} s${n}"
-        else
-            skipped="${skipped} s${n}"
-        fi
-    done
-
-    [[ -n "$skipped" ]] && log "AVISO: speakers sem preprocessing (ignorados):${skipped}"
-    [[ -z "$pattern" ]] && die "Nenhum speaker preprocessado em ${LIP_DIR}"
-
     TRAIN_LIST="${PROJECT_ROOT}/data/active_train.txt"
     VAL_LIST="${PROJECT_ROOT}/data/active_val.txt"
 
-    grep -E "${pattern}" "${src_train}" > "${TRAIN_LIST}"
-    grep -E "${pattern}" "${src_val}"   > "${VAL_LIST}"
+    # Gera lista de todos os vídeos preprocessados (4 níveis: s1/video/mpg_6000/lbad1s)
+    local processed_list
+    processed_list=$(mktemp)
+    find "${LIP_DIR}" -mindepth 4 -maxdepth 4 -type d 2>/dev/null | \
+        sed "s|${LIP_DIR}/||" | sort > "${processed_list}"
+
+    local n_processed
+    n_processed=$(wc -l < "${processed_list}")
+    log "Vídeos preprocessados em ${LIP_DIR}: ${n_processed}"
+    [[ "${n_processed}" -eq 0 ]] && die "Nenhum vídeo preprocessado em ${LIP_DIR}"
+
+    # Filtra os lists para só incluir vídeos que existem em lip/
+    grep -Fxf "${processed_list}" "${src_train}" > "${TRAIN_LIST}"
+    grep -Fxf "${processed_list}" "${src_val}"   > "${VAL_LIST}"
+    rm -f "${processed_list}"
 
     local n_train n_val
     n_train=$(wc -l < "${TRAIN_LIST}")
     n_val=$(wc -l < "${VAL_LIST}")
-    log "Data lists: ${n_train} treino / ${n_val} validação (speakers:${ready})"
+    log "Data lists: ${n_train} treino / ${n_val} validação"
 }
 
 # =============================================================================
