@@ -96,8 +96,8 @@ class MyDataset(Dataset):
           
         vid = ColorNormalize(vid)                   
         
-        vid_len = vid.shape[0]
-        anno_len = anno.shape[0]
+        vid_len = min(vid.shape[0], self.vid_pad)
+        anno_len = min(anno.shape[0], self.txt_pad)
         vid = self._padding(vid, self.vid_pad)
         anno = self._padding(anno, self.txt_pad)
         
