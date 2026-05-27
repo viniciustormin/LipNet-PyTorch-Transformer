@@ -127,7 +127,7 @@ class MyDataset(Dataset):
         return MyDataset.txt2arr(' '.join(txt).upper(), 1)
     
     def _padding(self, array, length):
-        array = [array[_] for _ in range(array.shape[0])]
+        array = [array[_] for _ in range(min(array.shape[0], length))]
         size = array[0].shape
         for i in range(length - len(array)):
             array.append(np.zeros(size))
