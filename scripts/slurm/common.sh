@@ -126,18 +126,27 @@ make_data_lists() {
     local src_train="${PROJECT_ROOT}/data/overlap_train.txt"
     local src_val="${PROJECT_ROOT}/data/overlap_val.txt"
 
+    # Determina quais speakers usar
+    local candidates
     if [[ "${SPEAKERS}" == "all" ]]; then
-        TRAIN_LIST="${src_train}"
-        VAL_LIST="${src_val}"
-        log "Data lists: completos (todos os speakers)"
-        return
+        candidates="${ALL_SPEAKERS}"
+    else
+        candidates="${SPEAKERS}"
     fi
 
-    # Monta pattern grep: ^s1/|^s2/|...
-    local pattern=""
-    for n in ${SPEAKERS}; do
-        pattern="${pattern}${pattern:+|}^s${n}/"
+    # Filtra para só incluir speakers com lip/ preprocessado
+    local pattern="" ready="" skipped=""
+    for n in ${candidates}; do
+        if [[ -d "${LIP_DIR}/s${n}" ]] && [[ $(find "${LIP_DIR}/s${n}" -name "*.jpg" 2>/dev/null | wc -l) -gt 0 ]]; then
+            pattern="${pattern}${pattern:+|}^s${n}/"
+            ready="${ready} s${n}"
+        else
+            skipped="${skipped} s${n}"
+        fi
     done
+
+    [[ -n "$skipped" ]] && log "AVISO: speakers sem preprocessing (ignorados):${skipped}"
+    [[ -z "$pattern" ]] && die "Nenhum speaker preprocessado em ${LIP_DIR}"
 
     TRAIN_LIST="${PROJECT_ROOT}/data/active_train.txt"
     VAL_LIST="${PROJECT_ROOT}/data/active_val.txt"
@@ -148,7 +157,7 @@ make_data_lists() {
     local n_train n_val
     n_train=$(wc -l < "${TRAIN_LIST}")
     n_val=$(wc -l < "${VAL_LIST}")
-    log "Data lists: ${n_train} treino / ${n_val} validação (speakers: ${SPEAKERS})"
+    log "Data lists: ${n_train} treino / ${n_val} validação (speakers:${ready})"
 }
 
 # =============================================================================
