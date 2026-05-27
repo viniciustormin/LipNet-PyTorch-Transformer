@@ -143,6 +143,12 @@ def train(args):
     device = _get_device(args.device)
     model = build_model(args).to(device)
 
+    # [h100] Mixed precision
+    use_amp = (device.type == 'cuda')
+    scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+    if use_amp:
+        print('  AMP bf16: enabled')
+
     history_path = os.path.join(args.save_dir, 'history.json')
     last_ckpt = os.path.join(args.save_dir, f'{args.model}_last.pt')
 
@@ -177,6 +183,14 @@ def train(args):
     if start_epoch >= args.max_epoch:
         print(f'Training already complete ({start_epoch} epochs done).')
         return
+
+    # [h100] torch.compile — antes do DataParallel
+    if device.type == 'cuda':
+        try:
+            model = torch.compile(model)
+            print('  torch.compile: enabled')
+        except Exception as e:
+            print(f'  torch.compile: skipped ({e})')
 
     net = nn.DataParallel(model).to(device) if device.type == 'cuda' else model
 
@@ -223,14 +237,19 @@ def train(args):
             txt_len = batch['txt_len'].to(device, non_blocking=nb)
 
             optimizer.zero_grad()
-            y = net(vid)
-            loss = crit(
-                y.transpose(0, 1).log_softmax(-1),
-                txt, vid_len.view(-1), txt_len.view(-1),
-            )
-            loss.backward()
+            # [h100] autocast bf16
+            with torch.autocast(device_type='cuda' if use_amp else 'cpu',
+                                dtype=torch.bfloat16, enabled=use_amp):
+                y = net(vid)
+                loss = crit(
+                    y.transpose(0, 1).log_softmax(-1),
+                    txt, vid_len.view(-1), txt_len.view(-1),
+                )
+            scaler.scale(loss).backward()
+            scaler.unscale_(optimizer)
             nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
-            optimizer.step()
+            scaler.step(optimizer)
+            scaler.update()
             epoch_losses.append(loss.item())
 
             # [v2] step do scheduler por batch (warmup+cosine)

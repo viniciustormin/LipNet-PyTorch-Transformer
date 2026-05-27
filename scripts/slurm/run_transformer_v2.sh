@@ -16,15 +16,16 @@
 #   sbatch scripts/slurm/run_transformer_v2.sh
 #
 # Variáveis de ambiente opcionais:
-#   SPEAKERS=all   BATCH_SIZE=32   WARMUP_STEPS=1000   MAX_EPOCH=50
+#   SPEAKERS=all   BATCH_SIZE=64   WARMUP_STEPS=4000   MAX_EPOCH=100
 
 set -euo pipefail
 
 # Override de padrões antes de sourciar common.sh (que usa ${VAR:-default})
 SPEAKERS="${SPEAKERS:-all}"
-BATCH_SIZE="${BATCH_SIZE:-32}"
+BATCH_SIZE="${BATCH_SIZE:-64}"
 NUM_WORKERS="${NUM_WORKERS:-16}"
-WARMUP_STEPS="${WARMUP_STEPS:-1000}"
+WARMUP_STEPS="${WARMUP_STEPS:-4000}"
+MAX_EPOCH="${MAX_EPOCH:-100}"
 
 PROJECT_ROOT="${PROJECT_ROOT:-${SLURM_SUBMIT_DIR:-}}"
 COMMON_SH="${PROJECT_ROOT}/scripts/slurm/common.sh"
