@@ -74,7 +74,7 @@ container_exec python train_transformer.py \
     --gpu             0 \
     --d_model         512 \
     --nhead           8 \
-    --num_layers      2 \
+    --num_layers      4 \
     --dim_feedforward 2048 \
     --attn_dropout    0.1
 

@@ -107,7 +107,7 @@ class LipNetTransformer(nn.Module):
         init.xavier_uniform_(self.FC.weight)
         init.constant_(self.FC.bias, 0)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, src_key_padding_mask=None) -> torch.Tensor:
         # x: (B, 3, T, 64, 128)
         x = self.pool1(self.dropout3d(self.relu(self.conv1(x))))
         x = self.pool2(self.dropout3d(self.relu(self.conv2(x))))
@@ -120,7 +120,7 @@ class LipNetTransformer(nn.Module):
         x = self.input_proj(x)      # (T, B, d_model)
         x = self.pos_enc(x)         # + sinusoidal PE
 
-        x = self.transformer_encoder(x)   # (T, B, d_model)
+        x = self.transformer_encoder(x, src_key_padding_mask=src_key_padding_mask)
 
         x = self.FC(x)                         # (T, B, num_classes)
         return x.permute(1, 0, 2).contiguous()  # (B, T, num_classes)
