@@ -95,6 +95,20 @@ def ctc_decode(y: torch.Tensor) -> list:
     return [ctc_beam_decode(log_probs[i]) for i in range(y.size(0))]
 
 
+def ctc_greedy_decode(y: torch.Tensor) -> list:
+    """Greedy CTC decode para monitoramento durante treino. y: (B, T, C)"""
+    preds = y.argmax(-1).cpu()
+    results = []
+    for pred in preds:
+        chars, prev = [], -1
+        for c in pred.tolist():
+            if c != 0 and c != prev:
+                chars.append(MyDataset.letters[c - 1])
+            prev = c
+        results.append(''.join(chars).strip())
+    return results
+
+
 # ---------------------------------------------------------------------------
 # Validation
 # ---------------------------------------------------------------------------
@@ -125,7 +139,7 @@ def validate(net: nn.Module, args, device: torch.device) -> tuple[float, float, 
             )
             losses.append(loss.item())
 
-            pred = ctc_decode(y)
+            pred = ctc_greedy_decode(y)
             truth = [MyDataset.arr2txt(txt[i], start=1) for i in range(txt.size(0))]
             wer_list.extend(MyDataset.wer(pred, truth))
             cer_list.extend(MyDataset.cer(pred, truth))
@@ -263,7 +277,7 @@ def train(args):
                 warmup_step[0] += 1
 
             if (i + 1) % args.display == 0:
-                pred = ctc_decode(y)
+                pred = ctc_greedy_decode(y)
                 truth = [MyDataset.arr2txt(txt[k], start=1) for k in range(txt.size(0))]
                 print(f'  [{epoch+1}/{args.max_epoch}] iter {i+1}/{len(loader)} '
                       f'loss={loss.item():.4f}')

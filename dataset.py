@@ -1,5 +1,6 @@
 # encoding: utf-8
 import math as _math
+import re as _re
 import numpy as np
 import glob
 import time
@@ -65,7 +66,8 @@ def ctc_beam_decode(log_probs: torch.Tensor, beam_width: int = 10, blank: int = 
         )[:beam_width])
 
     best = max(beams, key=lambda p: _logaddexp(beams[p][0], beams[p][1]))
-    return ''.join(MyDataset.letters[c - 1] for c in best).strip()
+    result = ''.join(MyDataset.letters[c - 1] for c in best).strip()
+    return _re.sub(r' {2,}', ' ', result)
 
     
 class MyDataset(Dataset):
