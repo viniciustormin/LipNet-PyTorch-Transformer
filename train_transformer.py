@@ -130,9 +130,12 @@ def validate(net: nn.Module, args, device: torch.device) -> tuple[float, float, 
             vid_len = batch['vid_len'].to(device)
             txt_len = batch['txt_len'].to(device)
 
-            T = vid.size(2)
-            pad_mask = torch.arange(T, device=device).unsqueeze(0) >= vid_len.unsqueeze(1)
-            y = net(vid, src_key_padding_mask=pad_mask)
+            if args.model == 'transformer':
+                T = vid.size(2)
+                pad_mask = torch.arange(T, device=device).unsqueeze(0) >= vid_len.unsqueeze(1)
+                y = net(vid, src_key_padding_mask=pad_mask)
+            else:
+                y = net(vid)
             loss = crit(
                 y.transpose(0, 1).log_softmax(-1),
                 txt, vid_len.view(-1), txt_len.view(-1),
@@ -255,11 +258,14 @@ def train(args):
 
             optimizer.zero_grad()
             # [h100] autocast bf16
-            T = vid.size(2)
-            pad_mask = torch.arange(T, device=device).unsqueeze(0) >= vid_len.unsqueeze(1)
             with torch.autocast(device_type='cuda' if use_amp else 'cpu',
                                 dtype=torch.bfloat16, enabled=use_amp):
-                y = net(vid, src_key_padding_mask=pad_mask)
+                if args.model == 'transformer':
+                    T = vid.size(2)
+                    pad_mask = torch.arange(T, device=device).unsqueeze(0) >= vid_len.unsqueeze(1)
+                    y = net(vid, src_key_padding_mask=pad_mask)
+                else:
+                    y = net(vid)
                 loss = crit(
                     y.transpose(0, 1).log_softmax(-1),
                     txt, vid_len.view(-1), txt_len.view(-1),
