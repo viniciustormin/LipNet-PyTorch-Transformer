@@ -17,6 +17,28 @@ import random
 import editdistance
 
 
+# Grammar-constrained post-processing para o GRID Corpus.
+# Cada sentença GRID segue o template fixo de 6 posições.
+_GRID_GRAMMAR = [
+    ['BIN', 'LAY', 'PLACE', 'SET'],
+    ['BLUE', 'GREEN', 'RED', 'WHITE'],
+    ['AT', 'BY', 'IN', 'WITH'],
+    list('ABCDEFGHIJKLMNOPQRSTUVWXYZ'),
+    ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'],
+    ['AGAIN', 'NOW', 'PLEASE', 'SOON'],
+]
+
+def grid_grammar_correct(decoded: str) -> str:
+    """Corrige cada palavra do output CTC para o token GRID mais próximo na posição correta."""
+    words = decoded.strip().upper().split()
+    result = []
+    for pos, candidates in enumerate(_GRID_GRAMMAR):
+        query = words[pos] if pos < len(words) else ''
+        best = min(candidates, key=lambda c: editdistance.eval(query, c))
+        result.append(best)
+    return ' '.join(result)
+
+
 # [v2] CTC beam search decode — puro Python, sem libs externas
 def ctc_beam_decode(log_probs: torch.Tensor, beam_width: int = 10, blank: int = 0) -> str:
     """

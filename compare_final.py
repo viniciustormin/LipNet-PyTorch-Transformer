@@ -32,7 +32,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from jiwer import wer as jiwer_wer, cer as jiwer_cer
 
-from dataset import MyDataset, ctc_beam_decode  # [v2] beam search
+from dataset import MyDataset, ctc_beam_decode, grid_grammar_correct  # [v2]
 from models import LipNetGRU, LipNetTransformer
 
 
@@ -102,7 +102,7 @@ def load_transformer(ckpt_path: str, args) -> nn.Module:
 # Avaliação com beam search (comparação justa entre os 3 modelos)
 # ---------------------------------------------------------------------------
 
-def evaluate(model: nn.Module, args, device: torch.device) -> dict:
+def evaluate(model: nn.Module, args, device: torch.device, use_grammar: bool = False) -> dict:
     model = model.to(device)
     dataset = MyDataset(
         args.video_path, args.anno_path, args.val_list,
@@ -131,6 +131,8 @@ def evaluate(model: nn.Module, args, device: torch.device) -> dict:
             losses.append(loss.item())
 
             preds = ctc_decode(y)
+            if use_grammar:
+                preds = [grid_grammar_correct(p) for p in preds]
             truths = [MyDataset.arr2txt(txt[i], start=1) for i in range(txt.size(0))]
             all_preds.extend(preds)
             all_truths.extend(truths)
@@ -239,6 +241,11 @@ def main(args):
     print('Avaliando Transformer v2 (beam search)...')
     v2_metrics  = evaluate(v2_model,  args, device)
 
+    print('Avaliando com grammar correction...')
+    gru_metrics_g = evaluate(gru_model, args, device, use_grammar=True)
+    v1_metrics_g  = evaluate(v1_model,  args, device, use_grammar=True)
+    v2_metrics_g  = evaluate(v2_model,  args, device, use_grammar=True)
+
     # Épocas de convergência
     gru_conv = convergence_epoch(gru_hist['val_loss'])
     v1_conv  = convergence_epoch(v1_hist['val_loss'])
@@ -250,23 +257,35 @@ def main(args):
     v2_params  = count_parameters(v2_model)
 
     # Tabela
-    sep = '=' * 80
-    fmt = '{:<22} {:>10} {:>10} {:>22} {:>12}'
+    sep = '=' * 96
+    fmt = '{:<22} {:>10} {:>10} {:>12} {:>12} {:>14}'
     print(f'\n{sep}')
-    print(fmt.format('Modelo', 'WER (beam)', 'CER (beam)', 'Época convergência', 'Params'))
+    print(fmt.format('Modelo', 'WER (beam)', 'WER+grammar', 'CER (beam)', 'CER+grammar', 'Params'))
     print(sep)
-    print(fmt.format('LipNet-GRU',        f'{gru_metrics["wer"]:.4f}', f'{gru_metrics["cer"]:.4f}', str(gru_conv), f'{gru_params:,}'))
-    print(fmt.format('LipNet-Transf v1',  f'{v1_metrics["wer"]:.4f}',  f'{v1_metrics["cer"]:.4f}',  str(v1_conv),  f'{v1_params:,}'))
-    print(fmt.format('LipNet-Transf v2',  f'{v2_metrics["wer"]:.4f}',  f'{v2_metrics["cer"]:.4f}',  str(v2_conv),  f'{v2_params:,}'))
+    print(fmt.format('LipNet-GRU',
+        f'{gru_metrics["wer"]:.4f}', f'{gru_metrics_g["wer"]:.4f}',
+        f'{gru_metrics["cer"]:.4f}', f'{gru_metrics_g["cer"]:.4f}',
+        f'{gru_params:,}'))
+    print(fmt.format('LipNet-Transf v1',
+        f'{v1_metrics["wer"]:.4f}',  f'{v1_metrics_g["wer"]:.4f}',
+        f'{v1_metrics["cer"]:.4f}',  f'{v1_metrics_g["cer"]:.4f}',
+        f'{v1_params:,}'))
+    print(fmt.format('LipNet-Transf v2',
+        f'{v2_metrics["wer"]:.4f}',  f'{v2_metrics_g["wer"]:.4f}',
+        f'{v2_metrics["cer"]:.4f}',  f'{v2_metrics_g["cer"]:.4f}',
+        f'{v2_params:,}'))
     print(sep)
-    print('* WER/CER re-avaliados com beam search (width=10) para comparação justa.')
+    print('* beam: beam search (width=10)  |  +grammar: beam search + GRID grammar correction')
     print(f'* Época convergência: 1ª época onde val_loss cai < 0.01 por 3 épocas consecutivas.')
 
     # Salva summary_final.json
     summary = {
-        'gru':            {'params': gru_params, 'inference_ms': round(gru_lat*1000, 3), 'convergence_epoch': gru_conv, **gru_metrics},
-        'transformer_v1': {'params': v1_params,  'inference_ms': round(v1_lat*1000, 3),  'convergence_epoch': v1_conv,  **v1_metrics},
-        'transformer_v2': {'params': v2_params,  'inference_ms': round(v2_lat*1000, 3),  'convergence_epoch': v2_conv,  **v2_metrics},
+        'gru':            {'params': gru_params, 'inference_ms': round(gru_lat*1000, 3), 'convergence_epoch': gru_conv,
+                           **gru_metrics, 'wer_grammar': gru_metrics_g['wer'], 'cer_grammar': gru_metrics_g['cer']},
+        'transformer_v1': {'params': v1_params,  'inference_ms': round(v1_lat*1000, 3),  'convergence_epoch': v1_conv,
+                           **v1_metrics, 'wer_grammar': v1_metrics_g['wer'],  'cer_grammar': v1_metrics_g['cer']},
+        'transformer_v2': {'params': v2_params,  'inference_ms': round(v2_lat*1000, 3),  'convergence_epoch': v2_conv,
+                           **v2_metrics, 'wer_grammar': v2_metrics_g['wer'],  'cer_grammar': v2_metrics_g['cer']},
     }
     summary_path = os.path.join(args.out_dir, 'summary_final.json')
     with open(summary_path, 'w') as f:
