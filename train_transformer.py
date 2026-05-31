@@ -184,7 +184,10 @@ def train(args):
 
     if os.path.isfile(last_ckpt) and os.path.isfile(history_path):
         print(f'Resuming from checkpoint: {last_ckpt}')
-        model.load_state_dict(torch.load(last_ckpt, map_location=device))
+        ckpt = torch.load(last_ckpt, map_location=device)
+        # [fix-compile] remove prefixo _orig_mod. gerado pelo torch.compile
+        ckpt = {k.replace('_orig_mod.', ''): v for k, v in ckpt.items()}
+        model.load_state_dict(ckpt)
         with open(history_path) as f:
             history = json.load(f)
         start_epoch = len(history['epochs'])
@@ -193,6 +196,8 @@ def train(args):
         print(f'  Resumed at epoch {start_epoch + 1}/{args.max_epoch}  (best WER so far: {best_wer:.4f})')
     elif args.weights:
         ckpt = torch.load(args.weights, map_location=device)
+        # [fix-compile] remove prefixo _orig_mod. gerado pelo torch.compile
+        ckpt = {k.replace('_orig_mod.', ''): v for k, v in ckpt.items()}
         missing, unexpected = model.load_state_dict(ckpt, strict=False)
         print(f'Loaded weights from {args.weights}')
         if missing:
