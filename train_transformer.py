@@ -249,6 +249,16 @@ def train(args):
         epoch_losses = []
         t0 = time.time()
 
+        if args.freeze_frontend_epochs > 0:
+            if epoch < args.freeze_frontend_epochs:
+                for name, param in model.named_parameters():
+                    if any(k in name for k in ['conv1','conv2','conv3','pool1','pool2','pool3']):
+                        param.requires_grad = False
+            elif epoch == args.freeze_frontend_epochs:
+                for param in model.parameters():
+                    param.requires_grad = True
+                print(f'  [fix-freeze] Época {epoch+1}: STConv descongelada')
+
         for i, batch in enumerate(loader):
             nb = device.type == 'cuda'
             vid = batch['vid'].to(device, non_blocking=nb)
@@ -388,6 +398,7 @@ def parse_args():
                    help='[v2] Warmup+cosine decay em vez de ReduceLROnPlateau')
     p.add_argument('--warmup_steps', type=int, default=1000,
                    help='[v2] Steps de warmup linear antes do cosine decay')
+    p.add_argument('--freeze_frontend_epochs', type=int, default=20)
 
     return p.parse_args()
 

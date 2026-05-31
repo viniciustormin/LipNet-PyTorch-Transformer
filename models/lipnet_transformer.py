@@ -53,7 +53,7 @@ class LipNetTransformer(nn.Module):
         dropout_p: float = 0.5,
         d_model: int = 512,
         nhead: int = 8,
-        num_layers: int = 2,
+        num_layers: int = 4,
         dim_feedforward: int = 2048,
         attn_dropout: float = 0.1,
         num_classes: int = 28,
@@ -83,7 +83,7 @@ class LipNetTransformer(nn.Module):
             dim_feedforward=dim_feedforward,
             dropout=attn_dropout,
             batch_first=False,   # expects (T, B, d_model)
-            norm_first=True,     # pre-LN is more stable for speech/video tasks
+            norm_first=False,    # [fix-postln] Post-LN + init cuidadoso evita colapso com CTC
         )
         self.transformer_encoder = nn.TransformerEncoder(
             encoder_layer, num_layers=num_layers
@@ -95,6 +95,7 @@ class LipNetTransformer(nn.Module):
         self.dropout3d = nn.Dropout3d(dropout_p)
 
         self._init_weights()
+        self._init_transformer_weights()  # [fix-postln]
 
     def _init_weights(self):
         for conv in (self.conv1, self.conv2, self.conv3):
@@ -106,6 +107,11 @@ class LipNetTransformer(nn.Module):
 
         init.xavier_uniform_(self.FC.weight)
         init.constant_(self.FC.bias, 0)
+
+    def _init_transformer_weights(self):
+        for p in self.transformer_encoder.parameters():
+            if p.dim() > 1:
+                nn.init.xavier_uniform_(p, gain=0.1)
 
     def forward(self, x: torch.Tensor, src_key_padding_mask=None) -> torch.Tensor:
         # x: (B, 3, T, 64, 128)
