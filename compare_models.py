@@ -75,6 +75,7 @@ def load_model(model_type: str, ckpt_path: str, args) -> nn.Module:
             num_classes=args.num_classes,
         )
     state = torch.load(ckpt_path, map_location='cpu')
+    state = {k.replace('_orig_mod.', ''): v for k, v in state.items()}
     model.load_state_dict(state)
     model.eval()
     return model
@@ -246,55 +247,53 @@ def main(args):
 
     device = _get_device(args.device)
 
-    # Inference latency
-    print('Benchmarking inference speed...')
-    gru_latency   = benchmark_inference(gru_model,   args, device)
-    trans_latency = benchmark_inference(trans_model, args, device)
+    if not args.skip_eval:
+        print('Benchmarking inference speed...')
+        gru_latency   = benchmark_inference(gru_model,   args, device)
+        trans_latency = benchmark_inference(trans_model, args, device)
+        print('Evaluating GRU on validation set...')
+        gru_metrics = evaluate(gru_model, args, device)
+        print('Evaluating Transformer on validation set...')
+        trans_metrics = evaluate(trans_model, args, device)
 
-    # WER / CER via jiwer
-    print('Evaluating GRU on validation set...')
-    gru_metrics = evaluate(gru_model, args, device)
-    print('Evaluating Transformer on validation set...')
-    trans_metrics = evaluate(trans_model, args, device)
-
-    # Load training histories
     with open(args.gru_hist) as f:
         gru_hist = json.load(f)
     with open(args.trans_hist) as f:
         trans_hist = json.load(f)
 
-    # Plot
     plot_curves(gru_hist, trans_hist, args.out_dir)
 
-    # Summary table
     sep = '=' * 60
     print(f'\n{sep}')
     print(f'{"Metric":<30} {"GRU":>12} {"Transformer":>14}')
     print(sep)
     print(f'{"Parameters":<30} {gru_params:>12,} {trans_params:>14,}')
-    print(f'{"Inference time (ms)":<30} {gru_latency*1000:>12.2f} {trans_latency*1000:>14.2f}')
-    print(f'{"Val Loss":<30} {gru_metrics["loss"]:>12.4f} {trans_metrics["loss"]:>14.4f}')
-    print(f'{"WER (jiwer)":<30} {gru_metrics["wer"]:>12.4f} {trans_metrics["wer"]:>14.4f}')
-    print(f'{"CER (jiwer)":<30} {gru_metrics["cer"]:>12.4f} {trans_metrics["cer"]:>14.4f}')
+    if not args.skip_eval:
+        print(f'{"Inference time (ms)":<30} {gru_latency*1000:>12.2f} {trans_latency*1000:>14.2f}')
+        print(f'{"Val Loss":<30} {gru_metrics["loss"]:>12.4f} {trans_metrics["loss"]:>14.4f}')
+        print(f'{"WER (jiwer)":<30} {gru_metrics["wer"]:>12.4f} {trans_metrics["wer"]:>14.4f}')
+        print(f'{"CER (jiwer)":<30} {gru_metrics["cer"]:>12.4f} {trans_metrics["cer"]:>14.4f}')
+    else:
+        print('  (avaliação pulada — rode sem --skip_eval com o dataset GRID)')
     print(sep)
 
-    # Save summary to JSON
-    summary = {
-        'gru': {
-            'params': gru_params,
-            'inference_ms': round(gru_latency * 1000, 3),
-            **gru_metrics,
-        },
-        'transformer': {
-            'params': trans_params,
-            'inference_ms': round(trans_latency * 1000, 3),
-            **trans_metrics,
-        },
-    }
-    summary_path = os.path.join(args.out_dir, 'summary.json')
-    with open(summary_path, 'w') as f:
-        json.dump(summary, f, indent=2)
-    print(f'\nFull summary saved to: {summary_path}')
+    if not args.skip_eval:
+        summary = {
+            'gru': {
+                'params': gru_params,
+                'inference_ms': round(gru_latency * 1000, 3),
+                **gru_metrics,
+            },
+            'transformer': {
+                'params': trans_params,
+                'inference_ms': round(trans_latency * 1000, 3),
+                **trans_metrics,
+            },
+        }
+        summary_path = os.path.join(args.out_dir, 'summary.json')
+        with open(summary_path, 'w') as f:
+            json.dump(summary, f, indent=2)
+        print(f'\nFull summary saved to: {summary_path}')
 
 
 # ---------------------------------------------------------------------------
@@ -319,11 +318,13 @@ def parse_args():
     p.add_argument('--num_classes',  type=int, default=28)
     p.add_argument('--batch_size',   type=int, default=8)
     p.add_argument('--num_workers',  type=int, default=4)
+    p.add_argument('--skip_eval', action='store_true',
+                   help='Gera apenas curvas de treino (sem avaliar dataset)')
 
     # Transformer architecture (must match the trained model)
     p.add_argument('--d_model',        type=int, default=512)
     p.add_argument('--nhead',          type=int, default=8)
-    p.add_argument('--num_layers',     type=int, default=2)
+    p.add_argument('--num_layers',     type=int, default=4)
     p.add_argument('--dim_feedforward', type=int, default=2048)
 
     p.add_argument('--out_dir', default='results', help='Where to save PNGs and summary.json')
